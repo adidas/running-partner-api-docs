@@ -1,0 +1,39 @@
+---
+type: object
+x-examples:
+  Receiver attributes without signing secret:
+    webhook_url: https://www.example.com
+    state: active
+    api_version: 0
+    created_at: '2021-01-14T06:19:41Z'
+    updated: '2021-01-14T06:19:41Z'
+properties:
+  webhook_url:
+    type: string
+    format: uri
+    pattern: "^https"
+    example: https://www.example.com
+  state:
+    type: string
+    enum:
+    - active
+    - deactivated
+  api_version:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+    example: '2021-01-14T06:19:41Z'
+  updated_at:
+    type: string
+    format: date-time
+    example: '2021-01-14T06:19:41Z'
+  failure_reason:
+    type: string
+    nullable: true
+required:
+- webhook_url
+- state
+- api_version
+- created_at
+- updated_at

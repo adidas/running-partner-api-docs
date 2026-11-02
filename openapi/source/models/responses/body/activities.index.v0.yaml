@@ -1,0 +1,28 @@
+---
+title: activities.index.v0
+type: object
+x-examples: {}
+properties:
+  data:
+    type: array
+    items:
+      "$ref": "../../Activity.v0.yaml"
+  links:
+    "$ref": "../../../schemas/jsonapi/pagination.yaml"
+  meta:
+    type: object
+    required:
+    - overall_count
+    properties:
+      overall_count:
+        type: integer
+  jsonapi:
+    type: object
+    properties:
+      version:
+        type: string
+        example: '1.0'
+required:
+- data
+- meta
+description: ''

@@ -1,0 +1,972 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Partner API guides and local API reference">
+      
+      
+      
+      
+        <link rel="prev" href="../request_size_limiting/">
+      
+      
+        <link rel="next" href="../webhooks/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
+    
+    
+      
+        <title>Sport types - adidas Runtastic Partner API</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sport-types" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="adidas Runtastic Partner API" class="md-header__button md-logo" aria-label="adidas Runtastic Partner API" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            adidas Runtastic Partner API
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Sport types
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="adidas Runtastic Partner API" class="md-nav__button md-logo" aria-label="adidas Runtastic Partner API" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    adidas Runtastic Partner API
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../../authentication/v1/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Authentication
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Authentication
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../authentication/v1/partner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Partner Authentication
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../authentication/v1/partner_in_behalf_of_user/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Partner on behalf of User
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    API concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            API concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rate_limiting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rate limiting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../request_size_limiting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Request size limiting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Sport types
+  </span>
+  
+
+      </a>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Webhooks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../maintenance/openapi-sources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maintenance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="sport-types">Sport types</h1>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>aerobics</td>
+<td>Aerobics</td>
+</tr>
+<tr>
+<td>american_football</td>
+<td>American Football</td>
+</tr>
+<tr>
+<td>back_country_skiing</td>
+<td>Back Country Skiing</td>
+</tr>
+<tr>
+<td>badminton</td>
+<td>Badminton</td>
+</tr>
+<tr>
+<td>baseball</td>
+<td>Baseball</td>
+</tr>
+<tr>
+<td>basketball</td>
+<td>Basketball</td>
+</tr>
+<tr>
+<td>biathlon</td>
+<td>Biathlon</td>
+</tr>
+<tr>
+<td>body_transformation</td>
+<td>Results Workout</td>
+</tr>
+<tr>
+<td>butt_training</td>
+<td>Butt Trainer Workout</td>
+</tr>
+<tr>
+<td>climbing</td>
+<td>Climbing</td>
+</tr>
+<tr>
+<td>cross_skating</td>
+<td>Cross Skating</td>
+</tr>
+<tr>
+<td>crosscountryskiing</td>
+<td>Cross Country Skiing</td>
+</tr>
+<tr>
+<td>crossfit</td>
+<td>Crossfit</td>
+</tr>
+<tr>
+<td>curling</td>
+<td>Curling</td>
+</tr>
+<tr>
+<td>cycling</td>
+<td>Cycling</td>
+</tr>
+<tr>
+<td>dancing</td>
+<td>Dancing</td>
+</tr>
+<tr>
+<td>different</td>
+<td>Different</td>
+</tr>
+<tr>
+<td>diving</td>
+<td>Diving</td>
+</tr>
+<tr>
+<td>driving</td>
+<td>Driving</td>
+</tr>
+<tr>
+<td>elliptical</td>
+<td>Elliptical</td>
+</tr>
+<tr>
+<td>ergometer</td>
+<td>Cycling (Ergometer)</td>
+</tr>
+<tr>
+<td>freecrossen</td>
+<td>Freecrossen</td>
+</tr>
+<tr>
+<td>frisbee</td>
+<td>Frisbee</td>
+</tr>
+<tr>
+<td>golfing</td>
+<td>Golfing</td>
+</tr>
+<tr>
+<td>gymnastics</td>
+<td>Gymnastics</td>
+</tr>
+<tr>
+<td>handball</td>
+<td>Handball</td>
+</tr>
+<tr>
+<td>handbike</td>
+<td>Handbike</td>
+</tr>
+<tr>
+<td>hiking</td>
+<td>Hiking</td>
+</tr>
+<tr>
+<td>ice_hockey</td>
+<td>Ice Hockey</td>
+</tr>
+<tr>
+<td>ice_skating</td>
+<td>Ice Skating</td>
+</tr>
+<tr>
+<td>ice_stock</td>
+<td>Ice Stock</td>
+</tr>
+<tr>
+<td>indoor</td>
+<td>Indoor</td>
+</tr>
+<tr>
+<td>kayaking</td>
+<td>Kayaking</td>
+</tr>
+<tr>
+<td>kite_skiing</td>
+<td>Kite Skiing</td>
+</tr>
+<tr>
+<td>kite_surfing</td>
+<td>Kite Surfing</td>
+</tr>
+<tr>
+<td>leg_training</td>
+<td>Leg Trainer Workout</td>
+</tr>
+<tr>
+<td>martial_arts</td>
+<td>Martial Arts</td>
+</tr>
+<tr>
+<td>motorbiking</td>
+<td>Motorbiking</td>
+</tr>
+<tr>
+<td>mountainbiking</td>
+<td>Mountain Biking</td>
+</tr>
+<tr>
+<td>nordicwalking</td>
+<td>Nordic Walking</td>
+</tr>
+<tr>
+<td>other</td>
+<td>Other</td>
+</tr>
+<tr>
+<td>paragliding</td>
+<td>Paragliding</td>
+</tr>
+<tr>
+<td>pilates</td>
+<td>Pilates</td>
+</tr>
+<tr>
+<td>pullups</td>
+<td>Pull ups</td>
+</tr>
+<tr>
+<td>pushups</td>
+<td>Push ups</td>
+</tr>
+<tr>
+<td>racecycling</td>
+<td>Race Cycling</td>
+</tr>
+<tr>
+<td>riding</td>
+<td>Riding</td>
+</tr>
+<tr>
+<td>rowing</td>
+<td>Rowing</td>
+</tr>
+<tr>
+<td>rugby</td>
+<td>Rugby</td>
+</tr>
+<tr>
+<td>running</td>
+<td>Running</td>
+</tr>
+<tr>
+<td>sailing</td>
+<td>Sailing</td>
+</tr>
+<tr>
+<td>situps</td>
+<td>Sit ups</td>
+</tr>
+<tr>
+<td>sixpack</td>
+<td>Six Pack Workout</td>
+</tr>
+<tr>
+<td>skateboarding</td>
+<td>Skateboarding</td>
+</tr>
+<tr>
+<td>skating</td>
+<td>Skating</td>
+</tr>
+<tr>
+<td>skiing</td>
+<td>Skiing</td>
+</tr>
+<tr>
+<td>skike</td>
+<td>Nordic Cross Skating</td>
+</tr>
+<tr>
+<td>sledding</td>
+<td>Sledding</td>
+</tr>
+<tr>
+<td>smovey_exercising</td>
+<td>Smovey Exercising</td>
+</tr>
+<tr>
+<td>smovey_walking</td>
+<td>Smovey Walking</td>
+</tr>
+<tr>
+<td>snowball_fight</td>
+<td>Snowball Fight</td>
+</tr>
+<tr>
+<td>snowboarding</td>
+<td>Snow Boarding</td>
+</tr>
+<tr>
+<td>snowman_building</td>
+<td>Snowman Building</td>
+</tr>
+<tr>
+<td>snowshoeing</td>
+<td>Snowshoeing</td>
+</tr>
+<tr>
+<td>soccer</td>
+<td>Soccer</td>
+</tr>
+<tr>
+<td>speed_skiing</td>
+<td>Speed Skiing</td>
+</tr>
+<tr>
+<td>spinning</td>
+<td>Spinning</td>
+</tr>
+<tr>
+<td>squash</td>
+<td>Squash</td>
+</tr>
+<tr>
+<td>squats</td>
+<td>Squats</td>
+</tr>
+<tr>
+<td>standup_paddling</td>
+<td>Standup Paddling</td>
+</tr>
+<tr>
+<td>strength_training</td>
+<td>Strength Training</td>
+</tr>
+<tr>
+<td>strolling</td>
+<td>Walking</td>
+</tr>
+<tr>
+<td>summersport</td>
+<td>Summer sport</td>
+</tr>
+<tr>
+<td>surfing</td>
+<td>Surfing</td>
+</tr>
+<tr>
+<td>swimming</td>
+<td>Swimming</td>
+</tr>
+<tr>
+<td>table_tennis</td>
+<td>Table Tennis</td>
+</tr>
+<tr>
+<td>tennis</td>
+<td>Tennis</td>
+</tr>
+<tr>
+<td>treadmill</td>
+<td>Running (Treadmill)</td>
+</tr>
+<tr>
+<td>virtual_cycling</td>
+<td>Virtual Cycling</td>
+</tr>
+<tr>
+<td>virtual_running</td>
+<td>Virtual Running</td>
+</tr>
+<tr>
+<td>volleyball</td>
+<td>Volleyball</td>
+</tr>
+<tr>
+<td>wakeboarding</td>
+<td>Wake Boarding</td>
+</tr>
+<tr>
+<td>windsurfing</td>
+<td>Windsurfing</td>
+</tr>
+<tr>
+<td>wintersport</td>
+<td>Winter sport</td>
+</tr>
+<tr>
+<td>yoga</td>
+<td>Yoga</td>
+</tr>
+<tr>
+<td>zumba</td>
+<td>Zumba</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>

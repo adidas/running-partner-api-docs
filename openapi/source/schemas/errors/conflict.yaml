@@ -1,0 +1,10 @@
+---
+title: Conflict
+type: object
+required:
+- errors
+properties:
+  errors:
+    type: array
+    items:
+      "$ref": "./json-api-error.yaml"

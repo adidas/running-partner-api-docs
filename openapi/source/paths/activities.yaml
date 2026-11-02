@@ -1,0 +1,724 @@
+---
+paths:
+  "/v0/activities":
+    get:
+      summary: List Activities
+      tags:
+      - Activities
+      operationId: get-v0-list-activities
+      description: "List activities from the authenticated user.\n\n<!-- theme: danger
+        -->\n> Do not use this endpoint to check for new activities as you have a
+        good chance of being rate limited. Our webhooks API allows you to get notified
+        whenever a user has created an activity. "
+      parameters:
+      - "$ref": "#/components/parameters/sort"
+      - "$ref": "#/components/parameters/page-number"
+      - "$ref": "#/components/parameters/page-size"
+      - "$ref": "#/components/parameters/filter-sport-type-name"
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "../models/responses/body/activities.index.v0.yaml"
+              examples:
+                Activities list:
+                  value:
+                    data:
+                    - id: 72fa7858-f293-4df0-9cbe-dd5b21e5c6a0
+                      type: activity
+                      attributes:
+                        sport_type: cycling
+                        start_time: 1596963316000
+                        end_time: 1596987088000
+                        start_time_timezone_offset: 7200000
+                        end_time_timezone_offset: 7200000
+                        distance: 43660
+                        duration: 10149133
+                        elevation_gain: 322
+                        elevation_loss: 319
+                        calories: 1526
+                        pause_duration: 13623990
+                        pulse_avg: 124
+                        pulse_max: 151
+                        weather_condition: sunny
+                        subjective_feeling: awesome
+                        surface: road
+                        longitude: 14.270083364099264
+                        latitude: 48.30641211010516
+                        temperature: 28.1
+                        notes: Nice bike ride with Kevin
+                    links:
+                      first: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=1&page%5Bsize%5D=1
+                      next: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=4&page%5Bsize%5D=1
+                      prev: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=2&page%5Bsize%5D=1
+                      last: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=5&page%5Bsize%5D=1
+                    meta:
+                      overall_count: 5
+                    jsonapi:
+                      version: '1.0'
+          headers: {}
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "../schemas/errors/bad-request.yaml"
+              examples:
+                Invalid sport_type_name filter:
+                  value:
+                    errors:
+                    - code: BAD_REQUEST
+                      detail: Invalid sport type
+                      status: '400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/unauthorized.yaml"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          "$ref": "#/components/responses/error-403-forbidden"
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/rate-limit.yaml"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_read
+    post:
+      summary: Create Activity
+      operationId: post-v0-activities
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/bad-request.yaml"
+              examples:
+                Missing file:
+                  value:
+                    errors:
+                    - code: INVALID_MULTIPART_REQUEST
+                      detail: 'missing required sidecar resource: file'
+                      status: '400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/unauthorized.yaml"
+              examples:
+                Unauthorized:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        code:
+                          type: string
+                          enum:
+                          - FORBIDDEN
+                        status:
+                          type: string
+                          enum:
+                          - '403'
+                        title:
+                          type: string
+                        detail:
+                          type: string
+                      required:
+                      - code
+                      - status
+                required:
+                - errors
+              examples:
+                Insufficient scope:
+                  value:
+                    errors:
+                    - code: FORBIDDEN
+                      detail: 'Insufficient scope. Required: pa_activity_write'
+                      status: '403'
+        '413':
+          description: Request Entity Too Large
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/request-size-limit.yaml"
+              examples:
+                Request size limit exceeded:
+                  value:
+                    message: Request size limit exceeded
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/rate-limit.yaml"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_write
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              "$ref": "../models/requests/body/activities.import.v0.yaml"
+            examples: {}
+        description: "You need to send a multipart request that consists of a file
+          and the description text.\n\nAn example would look like this:\n```text\nPOST
+          /v0/activities HTTP/1.1\nAuthorization: Bearer xxx\nAccept: */*\nHost: partnerapi.runtastic.com\nAccept-Encoding:
+          gzip, deflate, br\nConnection: keep-alive\nContent-Type: multipart/form-data;
+          boundary=--------------------------581243075298011649628917\nContent-Length:
+          206326\n \n----------------------------581243075298011649628917\nContent-Disposition:
+          form-data; name=\"file\"; filename=\"activity_12485610914.gpx\"\n<activity_12485610914.gpx>\n----------------------------581243075298011649628917\nContent-Disposition:
+          form-data; name=\"description\"\nsome notes about my run\n----------------------------581243075298011649628917--\n``` "
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      description: "Create an activity based on a FIT/GPX/TCX file.\n\nIt expects
+        to receive a multipart form with the attributes `file` and `description`.
+        The activity will be associated to the authenticated user.\n\nThe request
+        will NOT fail if the file content is invalid or truncated, since file validation
+        and processing happens asynchronously.\n\n<!--\ntype: tab\ntitle: General
+        validation rules\n-->\n\n- The `file` part must be a file upload, do not send
+        xml as text\n- The filename of the uploaded file must end in either one of
+        `.gpx`, `.tcx` or `.fit`\n- If the sport type is none of the ones we have
+        defined, we will fallback to \"other\"\n\nSee the other two tabs to learn
+        about how the FIT, GPX or TCX files themselves need to look like.\n\n<!--\ntype:
+        tab\ntitle: FIT format info\n-->\n\n## FIT Format\n\nThe Flexible and Interoperable
+        Data Transfer (FIT) protocol is a format designed specifically for the storing
+        and sharing of data that originates from sport, fitness and health devices.
+        It is specifically designed to be compact, interoperable and extensible.\n\nRunning App
+        has the ability to process FIT Activity File (FIT_FILE_TYPE = 4) as defined
+        in the official [FIT SDK](https://developer.garmin.com/fit/overview/).\n\nThe
+        FIT protocol defines different messages and data fields, here is a list of
+        fields grouped by message type that are used by Running App:\n\n**Supported
+        session message attributes**\n```\n  timestamp\n  start_time\n  sport\n  sub_sport\n
+        \ total_timer_time\n  total_elapsed_time\n  total_distance\n  total_calories\n
+        \ total_ascent\n  total_descent\n  max_speed\n  enhanced_max_speed\n```\n\n**Supported
+        record message attributes**\n```\n  timestamp\n  cadence\n  heart_rate\n  speed\n
+        \ enhanced_speed\n  altitude\n  enhanced_altitude\n  position_lat\n  position_long\n
+        \ distance\n  temperature  \n```\n\n**Supported event message attributes**\n```\n
+        \ timestamp\n  event\n  event_type\n```\n\n**Sport type handling**\n\nRunning App
+        supports the following value combinations for the `sport` and `sub_sport`
+        values. You always need to provide a value for `sport` if you provide a value
+        for `sub_sport`.\n\nIf you do not provide any `sport` value, Running App will
+        assume a sport type of \"other\". If you provide values that don't match the
+        ones in the following table, Running App treats it as if you did not provide
+        a value. E.g. `sport=cycling` and `sub_sport=monocycle` (monocyle is not defined)
+        would therefore be equivalent to providing `sport=cycling` and not providing
+        `sub_sport`.\n\n| sport \t\t  | sub_sport  \t\t\t \t\t     | resulting Running App
+        sport type\n|---|---|---|\n| aerobics |  | aerobics |\n| alpine_skiing |  |
+        skiing |\n| alpine_skiing | backcountry | back_country_skiing |\n| alpine_skiing
+        | resort | skiing |\n| american_football |  | american_football |\n| back_country_skiing
+        |  | back_country_skiing |\n| badminton |  | badminton |\n| baseball |  |
+        baseball |\n| basketball |  | basketball |\n| beach_volleyball |  | beach_volleyball
+        |\n| biathlon |  | biathlon |\n| biking |  | cycling |\n| boating |  | sailing
+        |\n| body_transformation |  | body_transformation |\n| bodyweight_training
+        |  | bodyweight_training |\n| bouldering |  | bouldering |\n| boxing |  |
+        boxing |\n| butt_training |  | butt_training |\n| calisthenics |  | calisthenics
+        |\n| cheerleading |  | cheerleading |\n| climbing |  | climbing |\n| cricket
+        |  | cricket |\n| cross_country_skiing |  | crosscountryskiing |\n| cross_country_skiing
+        | skate_skiing | crosscountryskiing |\n| crosscountryskiing |  | crosscountryskiing
+        |\n| cross_skating |  | cross_skating |\n| crossfit |  | crossfit |\n| curling
+        |  | curling |\n| cycling |  | cycling |\n| cycling | bmx | cycling |\n| cycling
+        | commuting | cycling |\n| cycling | cyclocross | cycling |\n| cycling | downhill
+        | mountainbiking |\n| cycling | e_bike_fitness | e_biking |\n| cycling | e_bike_mountain
+        | mountainbiking |\n| cycling | gravel_cycling | cycling |\n| cycling | hand_cycling
+        | handbike |\n| cycling | indoor_cycling | ergometer |\n| cycling | mixed_surface
+        | cycling |\n| cycling | mountain | mountainbiking |\n| cycling | recumbent
+        | cycling |\n| cycling | road | racecycling |\n| cycling | spin | spinning
+        |\n| cycling | track_cycling | racecycling |\n| cycling | virtual_activity
+        | virtual_cycling |\n| dancing |  | dancing |\n| diving |  | diving |\n| diving
+        | apnea_diving | diving |\n| diving | apnea_hunting | diving |\n| diving |
+        gauge_diving | diving |\n| diving | multi_gas_diving | diving |\n| diving
+        | single_gas_diving | diving |\n| driving |  | driving |\n| e_biking |  |
+        e_biking |\n| e_biking | e_bike_fitness | e_biking |\n| e_sports |  | e_sports
+        |\n| elliptical |  | elliptical |\n| ergometer |  | ergometer |\n| fencing
+        |  | fencing |\n| field_hockey |  | field_hockey |\n| fishing |  | other |\n|
+        fitness_equipment |  | other |\n| fitness_equipment | elliptical | elliptical
+        |\n| fitness_equipment | indoor_cycling | ergometer |\n| fitness_equipment
+        | indoor_rowing | rowing_machine |\n| fitness_equipment | indoor_skiing |
+        skiing |\n| fitness_equipment | indoor_walking | strolling |\n| fitness_equipment
+        | pilates | pilates |\n| fitness_equipment | stair_climbing | stair_climbing
+        |\n| fitness_equipment | treadmill | treadmill |\n| floor_climbing |  | stair_climbing
+        |\n| flying |  | other |\n| flying | rc_drone | other |\n| flying | wingsuit
+        | other |\n| freecrossen |  | freecrossen |\n| frisbee |  | frisbee |\n| generic
+        |  | other |\n| golf |  | golfing |\n| golfing |  | golfing |\n| gymnastics
+        |  | gymnastics |\n| handball |  | handball |\n| handbike |  | handbike |\n|
+        hang_gliding |  | paragliding |\n| hiking |  | hiking |\n| horseback_riding
+        |  | riding |\n| hunting |  | other |\n| ice_hockey |  | ice_hockey |\n| ice_skating
+        |  | ice_skating |\n| ice_stock |  | ice_stock |\n| inline_skating |  | skating
+        |\n| jumping_rope |  | jumping_rope |\n| jumpmaster |  | other |\n| kayaking
+        |  | kayaking |\n| kayaking | whitewater | kayaking |\n| kite_skiing |  |
+        kite_skiing |\n| kite_surfing |  | kite_surfing |\n| kitesurfing |  | kite_surfing
+        |\n| lacrosse |  | lacrosse |\n| leg_training |  | leg_training |\n| martial_arts
+        |  | martial_arts |\n| meditation |  | meditation |\n| motorbiking |  | motorbiking
+        |\n| motorcycling |  | motorbiking |\n| motorcycling | atv | motorbiking |\n|
+        motorcycling | motocross | motorbiking |\n| mountainbiking |  | mountainbiking
+        |\n| mountaineering |  | hiking |\n| multisport |  | other |\n| nordicwalking
+        |  | nordicwalking |\n| olympic_weightlifting |  | olympic_weightlifting |\n|
+        other |  | other |\n| paddling |  | kayaking |\n| padel |  | padel |\n| paragliding
+        |  | paragliding |\n| pilates |  | pilates |\n| plogging |  | plogging |\n|
+        pole_dancing |  | pole_dancing |\n| powerlifting |  | powerlifting |\n| pullups
+        |  | pullups |\n| pushups |  | pushups |\n| racecycling |  | racecycling |\n|
+        rafting |  | kayaking |\n| rafting | whitewater | kayaking |\n| riding |  |
+        riding |\n| rock_climbing |  | climbing |\n| rowing_machine |  | rowing_machine
+        |\n| rowing |  | rowing |\n| rugby |  | rugby |\n| running |  | running |\n|
+        running | indoor_running | running |\n| running | street | running |\n| running
+        | track | running |\n| running | trail | trail_running |\n| running | treadmill
+        | treadmill |\n| running | virtual_activity | virtual_running |\n| sailing
+        |  | sailing |\n| sailing | sail_race | sailing |\n| scootering |  | scootering
+        |\n| situps |  | situps |\n| sixpack |  | sixpack |\n| skateboarding |  |
+        skateboarding |\n| skating |  | skating |\n| skiing |  | skiing |\n| skike
+        |  | skike |\n| sky_diving |  | skydiving |\n| skydiving |  | skydiving |\n|
+        snowboarding |  | snowboarding |\n| snowboarding | backcountry | snowboarding
+        |\n| snowboarding | resort | snowboarding |\n| snowmobiling |  | other |\n|
+        snowshoeing |  | snowshoeing |\n| sledding |  | sledding |\n| smovey_exercising
+        |  | smovey_exercising |\n| smovey_walking |  | smovey_walking |\n| snowball_fight
+        |  | snowball_fight |\n| snowman_building |  | snowman_building |\n| soccer
+        |  | soccer |\n| speed_skiing |  | speed_skiing |\n| spinning |  | spinning
+        |\n| squash |  | squash |\n| squats |  | squats |\n| stand_up_paddleboarding
+        |  | standup_paddling |\n| stair_climbing |  | stair_climbing |\n| standup_paddling
+        |  | standup_paddling |\n| strength_training |  | strength_training |\n| stretching
+        |  | stretching |\n| strolling |  | strolling |\n| surfing |  | surfing |\n|
+        suspension_training |  | suspension_training |\n| swimming |  | swimming |\n|
+        swimming | lap_swimming | swimming |\n| swimming | open_water | swimming |\n|
+        tactical |  | other |\n| tennis |  | tennis |\n| tennis | exercise | tennis
+        |\n| tennis | match | tennis |\n| tennis | warm_up | tennis |\n| tabata |
+        \ | tabata |\n| table_tennis |  | table_tennis |\n| track_field |  | track_field
+        |\n| trail_running |  | trail_running |\n| training |  | strength_training
+        |\n| training | cardio_training | aerobics |\n| training | flexibility_training
+        | other |\n| training | strength_training | strength_training |\n| training
+        | yoga | yoga |\n| trampoline |  | trampoline |\n| transition |  | other |\n|
+        transition | bike_to_run_transition | other |\n| transition | run_to_bike_transition
+        | other |\n| transition | swim_to_bike_transition | other |\n| treadmill |
+        \ | treadmill |\n| via_ferrata |  | via_ferrata |\n| virtual_cycling |  |
+        virtual_cycling |\n| virtual_running |  | virtual_running |\n| volleyball
+        |  | volleyball |\n| wakeboarding |  | wakeboarding |\n| walking |  | strolling
+        |\n| walking | casual_walking | strolling |\n| walking | indoor_walking |
+        strolling |\n| walking | speed_walking | strolling |\n| water_skiing |  |
+        other |\n| wheelchair |  | wheelchair |\n| windsurfing |  | windsurfing |\n|
+        yoga |  | yoga |\n| zumba |  | zumba |\n\n<!--\ntype: tab\ntitle: GPX format
+        info\n-->\n\n## GPX Schema for Activity Imports\n\nGPX is a widely used XML
+        format for geospatial data. \n\n**adidas Runtastic Partner API** supports
+        the following schema definitions:\n- GPX schema v1.1 [(by Topografix)][gpx-xsd]\n-
+        Track Point Extension v1 [(by Garmin)][garmin-track-point-extension-v1]\n\nThe
+        following sections describe how **adidas Runtastic** creates a sport activity
+        based on your GPX file.\n\n<!-- theme: warning -->\n> Not supported extensions
+        or custom XML tags will be ignored during the GPX import.\n\n### Sport Activity
+        Data\n\n#### GPS Points\n\n- Schema: [GPX v1.1][gpx-xsd] \n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Two GPS points\nlineNumbers: true\n-->\n```xml\n<trk>\n  <trkseg>\n    <trkpt
+        lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:51.000Z</time>\n    </trkpt>\n
+        \   <trkpt lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:52.000Z</time>\n    </trkpt>\n
+        \   ...\n  <trkseg>\n</trk>\n```\n</details>  \n\nPoint tags (`<trkpt>`) inside
+        a track segment tag (`<trkseg>`) will be parsed as GPS points. The `<trkseg>`
+        needs to be inside of a track tag (`<trk>`) as defined in the specification.\n\n#####
+        GPS Point Structure\n\n**adidas Runtastic** utilizes the following attributes
+        of a `<trkpt>`, as well as additional nested tags, to build a GPS point:\n\n|
+        GPS point attribute \t| Unit                    \t| XML Reference                     \t|\n|:---------:\t|-------------------------\t|-----------------------------------\t|\n|
+        Latitude  \t| Decimal degrees ([WSG84][wsg-84]) \t| `lat` attribute of `<trkpt>`|\n|
+        Longitude \t| Decimal degrees ([WSG84](wsg-84)) \t| `lon` attribute of `<trkpt>`|\n|
+        Elevation \t| Meters                  \t| `<ele>` tag value nested inside
+        `<trkpt>`|\n| Time      \t| ISO8601 timestamp       \t| `<time>` tag value
+        nested inside `<trkpt>`|\n\n##### Derived Sport Activity Metrics\n\nBased
+        on the attributes listed above, metrics like *distance*, *duration*, *speed*,
+        *elevation gain / loss* and *maximum speed* are calculated.\n\n#### Sport
+        Type\n\n- Schema: [GPX v1.1][gpx-xsd]\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Example of a running sport activity\nlineNumbers: true\n-->\n```xml\n<trk>\n
+        \ <type>running</type>\n  ...\n</trk>\n```\n</details> \n\nThe name of the
+        sport type is extracted from the `<type>` tag, which is nested inside a track
+        tag (`<trk>`).\n\nYou can find a list of supported sport types down below.\n\n<details>\n
+        \ <summary>List of supported sport types</summary>\n\n  - aerobics\n - alpine_skiing\n
+        - american_football\n - badminton\n - baseball\n - basketball\n - beach_volleyball\n
+        - biathlon\n - biking\n - boating\n - body_transformation\n - bodyweight_training\n
+        - bouldering\n - boxing\n - butt_training\n - calisthenics\n - cheerleading\n
+        - cricket\n - cross_country_skiing\n - cross_skating\n - crossfit\n - curling\n
+        - cycling\n - dancing\n - diving\n - driving\n - e_biking\n - e_sports\n -
+        fencing\n - field_hockey\n - fishing\n - fitness_equipment\n - floor_climbing\n
+        - flying\n - freecrossen\n - frisbee\n - generic\n - golf\n - gymnastics\n
+        - handball\n - hang_gliding\n - hiking\n - horseback_riding\n - hunting\n
+        - ice_hockey\n - ice_skating\n - ice_stock\n - inline_skating\n - jumping_rope\n
+        - jumpmaster\n - kayaking\n - kite_skiing\n - kitesurfing\n - lacrosse\n -
+        leg_training\n - martial_arts\n - meditation\n - motorcycling\n - mountaineering\n
+        - multisport\n - nordicwalking\n - olympic_weightlifting\n - paddling\n -
+        padel\n - plogging\n - pole_dancing\n - powerlifting\n - pullups\n - pushups\n
+        - rafting\n - rock_climbing\n - rowing\n - rugby\n - running\n - sailing\n
+        - scootering\n - situps\n - sixpack\n - skateboarding\n - skike\n - sky_diving\n
+        - snowboarding\n - snowmobiling\n - snowshoeing\n - sledding\n - smovey_exercising\n
+        - smovey_walking\n - snowball_fight\n - snowman_building\n - soccer\n - speed_skiing\n
+        - squash\n - squats\n - stand_up_paddleboarding\n - stretching\n - surfing\n
+        - suspension_training\n - swimming\n - tactical\n - tennis\n - tabata\n -
+        table_tennis\n - track_field\n - training\n - trampoline\n - transition\n
+        - via_ferrata\n - volleyball\n - wakeboarding\n - walking\n - water_skiing\n
+        - wheelchair\n - windsurfing\n - zumba\n</details>\n\n#### Heart Rate\n\n-
+        Schema: [Track Point Extension v1][garmin-track-point-extension-v1]\n- Unit:
+        Beats per minute `[bpm]`\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Example of a heart rate value (line 7)\nlineNumbers: true\n-->\n```xml\n<gpx
+        xmlns:ns3=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" ...
+        > \n  <trk>\n    <trkseg>\n      <trkpt lat=\"47.6409219391644001007080078125\"
+        lon=\"13.61675835214555263519287109375\">\n        ...\n        <extensions>\n
+        \         <ns3:TrackPointExtension>\n            <ns3:hr>103</ns3:hr>\n          </ns3:TrackPointExtension>\n
+        \       </extensions>\n      </trkpt>\n      ...\n    <trkseg>\n  </trk>\n</gpx>\n```\n</details>
+        \n\nHeart rate information is extracted from the `<hr>` tag and is stored
+        along side the corresponding GPS point. \n\n#### Temperature\n\n- Schema:
+        [Track Point Extension v1][garmin-track-point-extension-v1]\n- Unit: Centigrade
+        `[°C]`\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle: Example
+        of a air temperature value (line 7)\nlineNumbers: true\n-->\n```xml\n<gpx
+        xmlns:ns3=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" ...
+        > \n  <trk>\n    <trkseg>\n      <trkpt lat=\"47.6409219391644001007080078125\"
+        lon=\"13.61675835214555263519287109375\">\n        ...\n        <extensions>\n
+        \         <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \         </ns3:TrackPointExtension>\n        </extensions>\n      </trkpt>\n
+        \     ...\n    <trkseg>\n  </trk>\n</gpx>\n```\n</details> \n\n**adidas Runtastic**
+        pulls air temperature data from the `<atemp>` tag and calculates the [median](https://en.wikipedia.org/wiki/Median)
+        of the entire sport activity.\n\n### Complete GPX import example\n\n<!--\ntitle:
+        Example of a running activity with air temperature and heart rate measurements
+        for import\nlineNumbers: true\n-->\n```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx
+        xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n
+        \ xmlns=\"http://www.topografix.com/GPX/1/1\"\n  xmlns:ns3=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n
+        \ xmlns:ns2=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n
+        \ <trk>\n    <name>A Running Activity</name>\n    <type>running</type>\n    <trkseg>\n
+        \     <trkpt lat=\"47.63674112968146800994873046875\" lon=\"13.6338529922068119049072265625\">\n
+        \       <ele>568.20001220703125</ele>\n        <time>2015-07-11T03:08:14.000Z</time>\n
+        \       <extensions>\n          <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \           <ns3:hr>160</ns3:hr>\n          </ns3:TrackPointExtension>\n        </extensions>\n
+        \     </trkpt>\n      <trkpt lat=\"47.63678236864507198333740234375\" lon=\"13.63387294113636016845703125\">\n
+        \       <ele>568.79998779296875</ele>\n        <time>2015-07-11T03:08:16.000Z</time>\n
+        \       <extensions>\n          <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \           <ns3:hr>159</ns3:hr>\n          </ns3:TrackPointExtension>\n        </extensions>\n
+        \     </trkpt>\n      <trkpt lat=\"47.6368047483265399932861328125\" lon=\"13.63388140685856342315673828125\">\n
+        \       <ele>569.20001220703125</ele>\n        <time>2015-07-11T03:08:17.000Z</time>\n
+        \       <extensions>\n          <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \           <ns3:hr>160</ns3:hr>\n          </ns3:TrackPointExtension>\n        </extensions>\n
+        \     </trkpt>     \n    </trkseg>\n  </trk>\n</gpx>\n\n```\n\n[gpx-xsd]:
+        https://www.topografix.com/GPX/1/1/gpx.xsd\n[garmin-track-point-extension-v1]:
+        https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\n[wsg-84]: https://en.wikipedia.org/wiki/World_Geodetic_System\n<!--\ntype:
+        tab\ntitle: TCX format info\n-->\n\n## TCX Format\n\nTCX is another XML based
+        format to exchange trace data. \n**adidas Runtastic Partner API** supports
+        the following attributes (supported attributes are listed in []):\n* Activities\n
+        \ * Activity[Sport]\n  * Id (= Start time of activity)\n  * Lap\n    * TotalTimeSeconds\n
+        \   * DistanceMeters\n    * MaximumSpeed\n    * Calories\n    * Track\n      *
+        Trackpoint\n        * Time\n        * Position\n          * LatitudeDegrees\n
+        \         * LongitudeDegrees\n        * AltitudeMeters\n        * DistanceMeters\n
+        \       * HeartRateBpm\n          * Value\n\n<!-- theme: info -->\n> All laps
+        and tracks inside one activity are combined on our side. If there are multiple
+        activities in one tcx file, we import them as separate activities.\n\nCompared
+        to a GPX file, a TCX file can also be created without having GPS coordinates
+        available,\nso it can be used to export indoor sports data including a heart-rate
+        trace for example.\n\n<!-- theme: warning -->\n> Not supported extensions
+        or custom XML tags will be ignored during the TCX import.\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Two points\nlineNumbers: true\n-->\n```xml\n  <Activities>\n    <Activity
+        Sport=\"biking\">\n      <Id>2010-06-26T10:06:11Z</Id>\n      <Lap StartTime=\"2010-06-26T10:06:11Z\">\n
+        \       <TotalTimeSeconds>1.0</TotalTimeSeconds>\n        <DistanceMeters>9762.4433594</DistanceMeters>\n
+        \       <MaximumSpeed>15.2404995</MaximumSpeed>\n        <Calories>493</Calories>\n
+        \       <Track>\n          <Trackpoint>\n            <Time>2010-06-26T10:06:11Z</Time>\n
+        \           <Position>\n              <LatitudeDegrees>40.7780135</LatitudeDegrees>\n
+        \             <LongitudeDegrees>-73.9665795</LongitudeDegrees>\n            </Position>\n
+        \           <AltitudeMeters>36.1867676</AltitudeMeters>\n            <DistanceMeters>0.0629519</DistanceMeters>\n
+        \           <HeartRateBpm xsi:type=\"HeartRateInBeatsPerMinute_t\">\n              <Value>148</Value>\n
+        \           </HeartRateBpm>\n          </Trackpoint>\n          <Trackpoint>\n
+        \           <Time>2010-06-26T10:06:12Z</Time>\n            <Position>\n              <LatitudeDegrees>40.7780136</LatitudeDegrees>\n
+        \             <LongitudeDegrees>-73.9665778</LongitudeDegrees>\n            </Position>\n
+        \           <AltitudeMeters>35.2254639</AltitudeMeters>\n            <DistanceMeters>0.1698548</DistanceMeters>\n
+        \           <HeartRateBpm xsi:type=\"HeartRateInBeatsPerMinute_t\">\n              <Value>148</Value>\n
+        \           </HeartRateBpm>\n          </Trackpoint>\n        </Track>\n      </Lap>\n
+        \   </Activity>\n  </Activities>\n```\n</details>  \n\n##### Derived Sport
+        Activity Metrics\n\nBased on the attributes listed above, overall metrics
+        like distance, duration, elevation gain / loss, as well as average and maximum
+        speed are calculated.\n\n#### Sport Type\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Example of an alpine skiing sport activity\nlineNumbers: true\n-->\n```xml\n<Activities>\n
+        \ <Activity Sport=\"alpine_skiing\">\n  ...\n  </Activity>\n</Activities>\n```\n</details>
+        \n\nThe name of the sport type is extracted from the `Sport` attribute in
+        the `<Activities>` tag, \nwhich is nested inside a activities tag (`<Activities>`).\n\nYou
+        can find a list of supported sport types down below.\n\n<details>\n  <summary>List
+        of supported sport types</summary>\n\n  - aerobics\n - alpine_skiing\n - american_football\n
+        - badminton\n - baseball\n - basketball\n - beach_volleyball\n - biathlon\n
+        - biking\n - boating\n - body_transformation\n - bodyweight_training\n - bouldering\n
+        - boxing\n - butt_training\n - calisthenics\n - cheerleading\n - cricket\n
+        - cross_country_skiing\n - cross_skating\n - crossfit\n - curling\n - cycling\n
+        - dancing\n - diving\n - driving\n - e_biking\n - e_sports\n - fencing\n -
+        field_hockey\n - fishing\n - fitness_equipment\n - floor_climbing\n - flying\n
+        - freecrossen\n - frisbee\n - generic\n - golf\n - gymnastics\n - handball\n
+        - hang_gliding\n - hiking\n - horseback_riding\n - hunting\n - ice_hockey\n
+        - ice_skating\n - ice_stock\n - inline_skating\n - jumping_rope\n - jumpmaster\n
+        - kayaking\n - kite_skiing\n - kitesurfing\n - lacrosse\n - leg_training\n
+        - martial_arts\n - meditation\n - motorcycling\n - mountaineering\n - multisport\n
+        - nordicwalking\n - olympic_weightlifting\n - paddling\n - padel\n - plogging\n
+        - pole_dancing\n - powerlifting\n - pullups\n - pushups\n - rafting\n - rock_climbing\n
+        - rowing\n - rugby\n - running\n - sailing\n - scootering\n - situps\n - sixpack\n
+        - skateboarding\n - skike\n - sky_diving\n - snowboarding\n - snowmobiling\n
+        - snowshoeing\n - sledding\n - smovey_exercising\n - smovey_walking\n - snowball_fight\n
+        - snowman_building\n - soccer\n - speed_skiing\n - squash\n - squats\n - stand_up_paddleboarding\n
+        - stretching\n - surfing\n - suspension_training\n - swimming\n - tactical\n
+        - tennis\n - tabata\n - table_tennis\n - track_field\n - training\n - trampoline\n
+        - transition\n - via_ferrata\n - volleyball\n - wakeboarding\n - walking\n
+        - water_skiing\n - wheelchair\n - windsurfing\n - zumba\n</details>\n\n<!--
+        type: tab-end -->\n\n---"
+      tags:
+      - Activities
+  "/v0/activities/{activity_id}":
+    parameters:
+    - "$ref": "#/components/parameters/activity_id"
+    get:
+      summary: Retrieve Activity
+      tags:
+      - Activities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "../models/responses/body/activities.retrieve.v0.yaml"
+              examples:
+                Activity details:
+                  value:
+                    data:
+                      id: 72fa7858-f293-4df0-9cbe-dd5b21e5c6a0
+                      type: activity
+                      attributes:
+                        sport_type: cycling
+                        start_time: 1596963316000
+                        end_time: 1596987088000
+                        start_time_timezone_offset: 7200000
+                        end_time_timezone_offset: 7200000
+                        distance: 43660
+                        duration: 10149133
+                        elevation_gain: 322
+                        elevation_loss: 319
+                        calories: 1526
+                        pause_duration: 13623990
+                        pulse_avg: 124
+                        pulse_max: 151
+                        weather_condition: sunny
+                        subjective_feeling: awesome
+                        surface: road
+                        longitude: 14.270083364099264
+                        latitude: 48.30641211010516
+                        temperature: 28.1
+                        notes: Nice bike ride with Kevin
+                    jsonapi:
+                      version: '1.0'
+          headers: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/unauthorized.yaml"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          "$ref": "#/components/responses/error-403-forbidden"
+        '429':
+          description: Too Many Requests
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "../schemas/errors/rate-limit.yaml"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_read
+      operationId: get-v0-activities-activity_id
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      description: Retrieve an activity from the authenticated user
+  "/v0/activities/{activity_id}/traces/gpx":
+    parameters:
+    - "$ref": "#/components/parameters/activity_id"
+    get:
+      summary: Retrieve Activity Trace
+      tags:
+      - Activities
+      responses:
+        '200':
+          description: GPX file content
+          content:
+            application/gpx+xml:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "../schemas/errors/unauthorized.yaml"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          "$ref": "#/components/responses/error-403-forbidden"
+        '404':
+          description: Not Found
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "../schemas/errors/not-found.yaml"
+              examples:
+                Trace Not Found:
+                  value:
+                    errors:
+                    - code: NOT_FOUND
+                      status: '404'
+        '429':
+          description: Too Many Requests
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "../schemas/errors/rate-limit.yaml"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_read
+      operationId: get-v0-retrieve-activity-trace
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      description: "\nRetrieve GPS trace of an activity in GPX format.\n\n## GPX Schema
+        for Activty Exports\n\nGPX is a widely used XML format for geospatial data.
+        \n\n**adidas Running App** uses the following schema definitions:\n- GPX schema
+        v1.1 [(by Topografix)][gpx-xsd]\n- Track Point Extension v1 [(by Garmin)][garmin-track-point-extension-v1]\n\nThe
+        following sections describe how **adidas Running App** exports a sport activity
+        trace in GPX format.\n\n### Sport Activity Data\n\n#### GPS Points\n\n- Schema:
+        [GPX v1.1][gpx-xsd] \n\nThe GPX will contain track segment tag (`<trkseg>`)
+        inside the track tag (`<trk>`), which will contain all GPS points as track
+        points (`<trkpt>`).\n\n##### GPS Point Structure\n\n**adidas Running App** utilizes
+        the following attributes of a `<trkpt>`, as well as additional nested tags,
+        to export a GPS point:\n\n| GPS point attribute \t| Unit                    \t|
+        XML Reference                     \t|\n|:---------:\t|-------------------------\t|-----------------------------------\t|\n|
+        Latitude  \t| Decimal degrees ([WSG84][wsg-84]) \t| `lat` attribute of `<trkpt>`|\n|
+        Longitude \t| Decimal degrees ([WSG84](wsg-84)) \t| `lon` attribute of `<trkpt>`|\n|
+        Elevation \t| Meters                  \t| `<ele>` tag value nested inside
+        `<trkpt>`|\n| Time      \t| ISO8601 timestamp       \t| `<time>` tag value
+        nested inside `<trkpt>`|\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Two GPS points\nlineNumbers: true\n-->\n```xml\n<trk>\n  <trkseg>\n    <trkpt
+        lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:51.000Z</time>\n    </trkpt>\n
+        \   <trkpt lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:52.000Z</time>\n    </trkpt>\n
+        \   ...\n  <trkseg>\n</trk>\n```\n</details>  \n\n#### Heart Rate\n\n- Schema:
+        [Track Point Extension v1][garmin-track-point-extension-v1]\n- Namespace:
+        `gpxtpx`\n- Unit: Beats per minute `[bpm]`\n\nHeart rate information is included
+        in the `<gpxtpx:hr>` tag and is stored alongside the corresponding GPS point.
+        \n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle: Example of a heart
+        rate value (line 7)\nlineNumbers: true\n-->\n```xml\n<gpx xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"
+        ... > \n  <trk>\n    <trkseg>\n      <trkpt lat=\"47.6409219391644001007080078125\"
+        lon=\"13.61675835214555263519287109375\">\n        ...\n        <extensions>\n
+        \         <gpxtpx:TrackPointExtension>\n            <gpxtpx:hr>103</gpxtpx:hr>\n
+        \         </gpxtpx:TrackPointExtension>\n        </extensions>\n      </trkpt>\n
+        \     ...\n    <trkseg>\n  </trk>\n</gpx>\n```\n</details> \n\n### Metadata\n\n-
+        Schema: [GPX v1.1][gpx-xsd]\n\nThe metadata section includes name, link and
+        time information inside the metadata tag (`<metadata>`).\n\nThe time tag (`<time>`)
+        contains the start time of the activity.\n\nThe name tag (`<name>`) shows
+        the name of the activity which starts with \"runtastic\\_\" and is followed
+        by the activity's start date and time, e.g `runtastic_20220629_0928`. \n\n###
+        Complete GPX export example\n\n<!--\ntitle: Example of a running activity
+        with heart rate measurements for export\nlineNumbers: true\n-->\n```xml\n<?xml
+        version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"Runtastic: Life is short
+        - live long, http://www.runtastic.com\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\"
+        xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"
+        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1
+        http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3
+        http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1
+        http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\">\n  <metadata>\n
+        \   <name>runtastic_20220629_0928</name>\n    <link href=\"http://www.runtastic.com\">\n
+        \     <text>runtastic</text>\n    </link>\n    <time>2022-06-29T09:28:32.000Z</time>\n
+        \ </metadata>\n  <trk>\n    <name>runtastic_20220629_0928</name>\n    <link
+        href=\"http://www.runtastic.com/sport-sessions/790cd15c-cb66-44de-8fb4-d883cfd7ffef\">\n
+        \     <text>Visit this link to view this activity on runtastic.com</text>\n
+        \   </link>\n    <trkseg>\n      <trkpt lat=\"50.469200134277344\" lon=\"6.095468521118164\">\n
+        \       <ele>492.0</ele>\n        <time>2022-06-29T09:28:32.000Z</time>\n
+        \       <extensions>\n          <gpxtpx:TrackPointExtension>\n            <gpxtpx:hr>128</gpxtpx:hr>\n
+        \         </gpxtpx:TrackPointExtension>\n        </extensions>\n      </trkpt>\n
+        \     <trkpt lat=\"50.4691047668457\" lon=\"6.095335483551025\">\n        <ele>492.0</ele>\n
+        \       <time>2022-06-29T09:28:35.000Z</time>\n        <extensions>\n          <gpxtpx:TrackPointExtension>\n
+        \           <gpxtpx:hr>130</gpxtpx:hr>\n          </gpxtpx:TrackPointExtension>\n
+        \       </extensions>\n      </trkpt>\n      ...\n    </trkseg>\n  </trk>\n</gpx>\n```\n\n[gpx-xsd]:
+        https://www.topografix.com/GPX/1/1/gpx.xsd\n[garmin-track-point-extension-v1]:
+        https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\n[wsg-84]: https://en.wikipedia.org/wiki/World_Geodetic_System\n"

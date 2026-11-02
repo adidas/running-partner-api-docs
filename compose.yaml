@@ -1,0 +1,43 @@
+services:
+  generate:
+    build:
+      context: .
+      dockerfile: Containerfile.tools
+    command: ruby bin/generate_oas.rb
+    volumes:
+      - .:/workspace
+
+  docs:
+    build:
+      context: .
+      dockerfile: Containerfile.tools
+    command: mkdocs serve --dev-addr=0.0.0.0:8000
+    ports:
+      - "${DOCS_PORT:-8000}:8000"
+    volumes:
+      - .:/workspace
+
+  swagger-editor:
+    image: docker.io/swaggerapi/swagger-editor@sha256:0b7200657134a6696f42c4e7e84037b2e4ac8ccaf5e674bf74eb8471998f801d
+    depends_on:
+      generate:
+        condition: service_completed_successfully
+    ports:
+      - "${SWAGGER_PORT:-8081}:80"
+    volumes:
+      - ./openapi/generated/partner-api.v0.yaml:/usr/share/nginx/html/partner-api.v0.yaml:ro
+      - ./swagger-editor/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+
+  validate:
+    profiles:
+      - tools
+    build:
+      context: .
+      dockerfile: Containerfile.tools
+    command: >-
+      sh -c "ruby bin/generate_oas.rb
+      && ruby bin/validate.rb
+      && spectral lint --ruleset .spectral.yaml openapi/generated/partner-api.v0.yaml
+      && mkdocs build --strict"
+    volumes:
+      - .:/workspace

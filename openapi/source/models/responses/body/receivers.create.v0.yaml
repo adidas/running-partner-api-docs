@@ -1,0 +1,20 @@
+---
+title: receivers.create.v0
+description: ''
+allOf:
+- "$ref": "../../identifiers/Receiver.v0.yaml"
+- type: object
+  properties:
+    data:
+      "$ref": "../../attributes/Receiver.attributes.with.signing.secret.v0.yaml"
+    jsonapi:
+      type: object
+      required:
+      - version
+      properties:
+        version:
+          type: string
+          minLength: 1
+  required:
+  - data
+  - jsonapi

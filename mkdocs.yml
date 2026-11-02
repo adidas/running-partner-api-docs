@@ -1,0 +1,25 @@
+site_name: adidas Running App Partner API
+site_description: Partner API guides and local API reference
+docs_dir: docs
+site_dir: site
+strict: true
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.indexes
+    - content.code.copy
+nav:
+  - Introduction: index.md
+  - Authentication:
+      - Overview: authentication/v1/index.md
+      - Partner Authentication: authentication/v1/partner.md
+      - Partner on behalf of User: authentication/v1/partner_in_behalf_of_user.md
+  - API concepts:
+      - Rate limiting: API/v0/rate_limiting.md
+      - Request size limiting: API/v0/request_size_limiting.md
+      - Sport types: API/v0/sport_types.md
+      - Webhooks: API/v0/webhooks.md
+  - API reference: reference/index.md
+  - Changelog: changelog.md
+  - Maintenance: maintenance/openapi-sources.md

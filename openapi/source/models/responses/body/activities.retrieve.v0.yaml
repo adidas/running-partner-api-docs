@@ -1,0 +1,17 @@
+---
+title: activities.retrieve.v0
+type: object
+properties:
+  data:
+    "$ref": "../../Activity.v0.yaml"
+  jsonapi:
+    type: object
+    required:
+    - version
+    properties:
+      version:
+        type: string
+        example: '1.0'
+required:
+- data
+- jsonapi

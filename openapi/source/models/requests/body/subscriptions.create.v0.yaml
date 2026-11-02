@@ -1,0 +1,17 @@
+---
+title: subscriptions.create.v0
+type: object
+required:
+- topics
+- receiver_id
+properties:
+  topics:
+    type: array
+    items:
+      type: string
+      enum:
+      - activity:created
+      - access_grant:deleted
+  receiver_id:
+    type: string
+    format: uuid

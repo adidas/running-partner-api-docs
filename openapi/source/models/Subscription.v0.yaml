@@ -1,0 +1,19 @@
+---
+title: Subscription
+allOf:
+- "$ref": "./identifiers/Subscription.v0.yaml"
+- type: object
+  properties:
+    attributes:
+      "$ref": "./attributes/Subscription.attributes.v0.yaml"
+x-examples:
+  Subscription example:
+    id: 645489a9-96dc-4067-b301-5d60c9c02f00
+    type: subscriptions
+    attributes:
+      receiver_id: b45de99a-9158-413b-a559-77a398e208f3
+      user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+      topics:
+      - activity:created
+      created_at: '2019-08-24T14:15:22Z'
+      updated_at: '2019-08-24T14:15:22Z'

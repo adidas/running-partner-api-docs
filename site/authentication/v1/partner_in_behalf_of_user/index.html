@@ -1,0 +1,1177 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Partner API guides and local API reference">
+      
+      
+      
+      
+        <link rel="prev" href="../partner/">
+      
+      
+        <link rel="next" href="../../../API/v0/rate_limiting/">
+      
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.44">
+    
+    
+      
+        <title>Partner on behalf of User - adidas Runtastic Partner API</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.0253249f.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#partner-in-behalf-of-user-authentication" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="adidas Runtastic Partner API" class="md-header__button md-logo" aria-label="adidas Runtastic Partner API" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            adidas Runtastic Partner API
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Partner on behalf of User
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="adidas Runtastic Partner API" class="md-nav__button md-logo" aria-label="adidas Runtastic Partner API" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    adidas Runtastic Partner API
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Authentication
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Authentication
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../partner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Partner Authentication
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Partner on behalf of User
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Partner on behalf of User
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#getting-an-access-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting an access token
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting an access token">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-authorization-from-the-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      Get authorization from the user
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Get authorization from the user">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-not-use-webviews" class="md-nav__link">
+    <span class="md-ellipsis">
+      Do not use webviews
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuing-the-access-token-and-refresh-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issuing the access token and refresh token
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Issuing the access token and refresh token">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openid-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenID scope
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuing-access-tokens-through-refresh-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issuing access tokens through refresh tokens
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performing-authenticated-api-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performing authenticated API requests
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#revoking-a-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Revoking a token
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access-token-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Access token best practices
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Access token best practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-token-expiration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Access token expiration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-token-expiration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refresh token expiration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handling-expired-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Handling expired tokens
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    API concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            API concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../API/v0/rate_limiting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rate limiting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../API/v0/request_size_limiting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Request size limiting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../API/v0/sport_types/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sport types
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../API/v0/webhooks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Webhooks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../reference/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API reference
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../changelog/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../maintenance/openapi-sources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maintenance
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#getting-an-access-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Getting an access token
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Getting an access token">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#get-authorization-from-the-user" class="md-nav__link">
+    <span class="md-ellipsis">
+      Get authorization from the user
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Get authorization from the user">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#do-not-use-webviews" class="md-nav__link">
+    <span class="md-ellipsis">
+      Do not use webviews
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuing-the-access-token-and-refresh-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issuing the access token and refresh token
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Issuing the access token and refresh token">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#openid-scope" class="md-nav__link">
+    <span class="md-ellipsis">
+      OpenID scope
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#issuing-access-tokens-through-refresh-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Issuing access tokens through refresh tokens
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#performing-authenticated-api-requests" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performing authenticated API requests
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#revoking-a-token" class="md-nav__link">
+    <span class="md-ellipsis">
+      Revoking a token
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#access-token-best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Access token best practices
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Access token best practices">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#access-token-expiration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Access token expiration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refresh-token-expiration" class="md-nav__link">
+    <span class="md-ellipsis">
+      Refresh token expiration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#handling-expired-tokens" class="md-nav__link">
+    <span class="md-ellipsis">
+      Handling expired tokens
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="partner-in-behalf-of-user-authentication">Partner in behalf of User Authentication</h1>
+<p>The user's consent is required to access their Runtastic information. To do so, the
+<a href="https://tools.ietf.org/html/rfc6749#section-4.1">Authorization Code Grant flow</a> must be implemented
+from the Partner side.</p>
+<h2 id="getting-an-access-token">Getting an access token</h2>
+<p>In order to perform any request to the API, you will need an access token.
+Remember that all requests <strong>from this section</strong> are performed in behalf of a Runtastic user and
+the access token is tied to the user.</p>
+<p>There are a few steps for the whole authentication flow. The following sections
+describe the necessary steps. The following sequence diagram illustrates the whole process:</p>
+<p><img alt="Partner authorization code flow" src="../../../assets/images/partner_in_behalf_of_user_auth.png" /></p>
+<!--
+sequenceDiagram
+Partner Website->>Runtastic Auth Server: Sends user to consent page
+Note right of Partner Website: CLIENT_ID
+Runtastic Auth Server->>Runtastic Auth Server: User performs authentication
+Runtastic Auth Server->>Runtastic Auth Server: User consents to the asked scopes
+Runtastic Auth Server- ->>Partner Website: Redirects to redirect_uri
+Note left of Runtastic Auth Server: CODE
+Partner Website->>Runtastic Auth Server: Requests access token for the user
+Note right of Partner Website: CODE, CLIENT_ID, CLIENT_SECRET
+Runtastic Auth Server- ->>Partner Website: Returns access token
+Note left of Runtastic Auth Server: ACCESS_TOKEN, REFRESH_TOKEN
+-->
+
+<h3 id="get-authorization-from-the-user">Get authorization from the user</h3>
+<p>To get the OAuth 2.0 Authorization Code Grant flow started, the first step is to get the user to the
+following page:</p>
+<pre><code>https://accounts.runtastic.com/v1/as/authorization.oauth2
+?client_id={CLIENT_ID}
+&amp;response_type=code
+&amp;scope={SPACE_SEPARATED_SCOPES}
+&amp;pfidpadapterid=refid
+&amp;redirect_uri={YOUR_APP_CALLBACK_URL}
+&amp;state={OPTIONAL_CUSTOM_DATA}
+</code></pre>
+<p>Linebreaks were added for clarity only; that is supposed to be one full URL.</p>
+<p>The minimum required scopes are <code>pa_identity</code> and <code>openid</code> plus one of our activity scopes (<code>pa_activity_read</code> or <code>pa_activity_write</code>)</p>
+<p>This will likely be a link in your app that will get the user to that URL via a
+web browser. That page will take care of having the user log in the Runtastic
+system and display a consent screen asking for permission so that your app
+may access the user's data. The pieces of data that will be asked for are the ones
+that you include in the "scope" parameter of the URL above.
+You should always ask for the most restricted set of scopes that are needed for
+your app to work. Do not ask for data that won't be used by your app.</p>
+<p>Note: The web browser is necessary since OAuth 2.0 is designed with it in
+mind. There is no way around it.</p>
+<!-- theme: warning -->
+
+<blockquote>
+<h5 id="do-not-use-webviews">Do not use webviews</h5>
+<p>Webviews block pop-ups, meaning that users that use social logins (Google / Apple / Facebook) won't be able to login as the pop-up to enter credentials will not be shown. Thus always open the flow in the users native browser.</p>
+</blockquote>
+<p>The placeholders in the query string parameters should be filled in with the
+appropriate values. The parameters are described as follows:</p>
+<ul>
+<li><strong>client_id</strong>: This must have the <code>client_id</code> that we provided for your app</li>
+<li><strong>response_type</strong>: It must be the string <code>code</code></li>
+<li><strong>scope</strong>: A list with the scopes the user will give your app consent. The list items are separated by space. Besides <code>pa_identity</code> and <code>openid</code>, which always need to be requested, the following scopes can be used*:</li>
+<li><code>pa_activity_read</code>: The user grants your app the permission to read all of the users activities</li>
+<li><code>pa_activity_write</code>: The user grants your app the permission to create new activities</li>
+<li><strong>pfidpadapterid</strong>: It must be the string <code>refid</code></li>
+<li><strong>redirect_uri</strong>: The URL the user will be redirected to when the OAuth flow is finished. See notes below on how to use this parameter</li>
+<li><strong>state</strong>: This parameter is optional. You can send any data here and it will be sent along in the <strong>redirect_uri</strong></li>
+</ul>
+<p>*<em>If made available to you via our contract</em></p>
+<!-- theme: warning -->
+
+<blockquote>
+<p>Never send the <code>client_secret</code> value in the URL above, as doing so would publicy expose the secret</p>
+</blockquote>
+<p>Note that the value of the <code>redirect_uri</code> parameter must exactly match one of
+the URLs you sent us when requesting access to the API. Thus, this value is
+whitelisted. Also note that you must not include any query string in this
+URL (i.e. no <code>?</code> in the URL). Rather than using the query string, you should
+use the <code>state</code> parameter as it will be appended as a parameter when redirecting
+the user to the URL in <code>redirect_uri</code>.</p>
+<p>In case the user denies access in the consent screen, the redirect to the
+<code>redirect_uri</code> will still occur. However, the <code>code</code> parameter will not be
+included and instead, the parameters <code>error_description</code> and <code>error</code> will be
+set. The value of <code>error</code> will be <code>access_denied</code>, and <code>error_description</code>
+will include a textual description of the error.</p>
+<h3 id="issuing-the-access-token-and-refresh-token">Issuing the access token and refresh token</h3>
+<p>When the OAuth flow is finished and consent has been successfully granted, the user will
+be redirected, in the web browser, to the URL you provided in the <code>redirect_uri</code>
+parameter in the URL above. The redirect will add a query string parameter
+named <code>code</code> that will be exchanged for the access token and refresh token.</p>
+<p>If you sent a <code>state</code> attribute to the authorization URL, it will be sent along
+with the same name, as a query parameter, in this redirect. Its value is left
+untouched and it is opaque to us, so the value you provided won't be modified
+in any way.</p>
+<p>The backend behind the <code>redirect_uri</code> must be under your control. It must
+immediately exchange the authorization code (that is, the <code>code</code> parameter)
+with the access token by performing a POST HTTP request to the URL
+<code>https://accounts.runtastic.com/v1/as/token.oauth2</code>.</p>
+<p>The contents of the request must be encoded as in the <code>application/x-www-form-urlencoded</code> MIME type (<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST">see more</a>).</p>
+<p>The parameters to be sent in the body are the following:</p>
+<ul>
+<li><strong>grant_type</strong>: It must be the string <code>authorization_code</code></li>
+<li><strong>client_id</strong>: The <code>client_id</code> of your app</li>
+<li><strong>client_secret</strong>: The <code>client_secret</code> of your app</li>
+<li><strong>code</strong>: The authorization code you received in the redirect URL</li>
+<li><strong>redirect_uri</strong>: The <code>redirect_uri</code> that you used in the authorization URL
+(the one in the first step of the OAuth flow)</li>
+</ul>
+<blockquote>
+<p>This call must be performed from the server side, never from a
+web browser or mobile client, as that would expose the client_secret value.</p>
+</blockquote>
+<p>The response will be a JSON encoded object. An example response is as follows:</p>
+<pre><code class="language-json">{
+  &quot;access_token&quot;: &quot;sbfWbvBnG8jhbYBt1eJAoi&quot;,
+  &quot;refresh_token&quot;: &quot;3yDbEc22RjJDBTJHwMnyPFwFzVOqjKq4V0A47RwhwdRjkdJFFkLI2E9GtbBmHzqm2MlhJZmf4B4RIJTnaGLWLn2SZSzKx0c2Px7Qb5iW0txIPhGcRV2elF7IZtn6jMzr&quot;,
+  &quot;token_type&quot;: &quot;Bearer&quot;,
+  &quot;expires_in&quot;: 7199
+}
+</code></pre>
+<p>The <code>access_token</code> and <code>refresh_token</code> attributes contain the access and refresh tokens, respectively. You must store these in a safe place and they
+must never be shared. The <code>expires_in</code> attribute tells how long, in seconds, until the access token expires. In the example above, it is valid within the
+next 120 minutes from when the request was performed.</p>
+<p>It can also be that the response includes an <code>id_token</code> attribute. Its content
+is a <a href="https://jwt.io/">JWT</a> which includes information regarding the user.
+The <code>sub</code> claim of the JWT corresponds to the user ID. The user ID is useful
+to identify the user when receiving <a href="../../../API/v0/webhooks/">webhooks</a>.</p>
+<p>At this point you can already perform API calls using the access token.</p>
+<p>See the following sections for information on how to use the access token and
+how the expiry time and refresh tokens should be dealt with.</p>
+<h4 id="openid-scope">OpenID scope</h4>
+<p>In order to retrieve information from the user associated with the access token, the scope
+<code>openid</code> must be added in the <code>SPACE_SEPARATED_SCOPES</code>.</p>
+<p>If that's done, the requests to issue access tokens will return the attribute <code>id_token</code>, which is
+a <a href="https://jwt.io/">JWT</a> with information regarding the user in its payload, eg.:</p>
+<pre><code class="language-json">{
+    &quot;access_token&quot;: &quot;DAwD8r2mL91Z7J6aAp9JFEHj9QWVWJq02k4OtdSjd35adrLM8aD20Fl0xAazwg7SsIabdqQC1lzHGWVFGMyhp7tVgSbUnKKe8sWDrfvqo0JYZQwqYdZMB4qRNZzdOBtR&quot;,
+    &quot;refresh_token&quot;: &quot;23DF5LuLI5WGyo9zoRM5Jy7ONx9Rk0BZiHFW317AIKFoD3RhbSkdo1aXJiQ36ZCCbmU0waufafOl2pVTMwOwxDL201eE7n91jBO0HlTVKAuSwmIVxmNwoueLDE02AsaD&quot;,
+    &quot;id_token&quot;: &quot;eyJhbGciOiJSUzI1NiIsImtpZCI6IjZwaE9YTHFqVU42RHBBck9iUmRSSVcifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLnJ1bnRhc3RpYy5jb20vdjEiLCJpYXQiOjE2MTU5MTA2OTUsImV4cCI6MTY0NzQ0NjY5NSwiYXVkIjoicGFwaV9wYXJ0bmVyIiwic3ViIjoiQUxEQzRNTjEyRURBQjlHSCJ9.h3RoExoZgwCQO16QUJFGaG9GluRXxuuDGBayHkb3gDoofoxYib3HKBPuJR-oTl-3AlzgpgpZsbHkaCPvRD0Pu5Q2se4yUlE7MrMKKbccrS6COlEe3laQNsgZDXMXCY3Aq4GAgUYjzXE2-2FaLw1eQu1anSahKiiW4z7R0nAmjoTwfwhIVSg6d0ourNAOcs5XhIz8f-ahNu8A2PXQvx2sbGQPKdMSeeA05f_1f-7nDXKEpIrW9qAdgwFNw-4nnk_fl1Nqq6Qni4D6XIcZAdIDT6dnP_uNVMAInAnqAJcDtT8bIxxfUjjq7N13jUXsbJfe8-5tu7ko_HMu3yM6TZr_cA&quot;,
+    &quot;token_type&quot;: &quot;Bearer&quot;,
+    &quot;expires_in&quot;: 899
+}
+</code></pre>
+<p>The decoded JWT payload results in:</p>
+<pre><code class="language-json">{
+  &quot;sub&quot;: &quot;ALDC4MN12EDAB9GH&quot;,
+  &quot;aud&quot;: &quot;papi_partner&quot;,
+  &quot;jti&quot;: &quot;eEym4uPLXgcF9F3p5lGc4f&quot;,
+  &quot;iss&quot;: &quot;https://accounts.runtastic.com/v1&quot;,
+  &quot;iat&quot;: 1615897609,
+  &quot;exp&quot;: 1615897909
+}
+</code></pre>
+<blockquote>
+<p>The <code>sub</code> attribute represents the <code>user_id</code>.</p>
+</blockquote>
+<h3 id="issuing-access-tokens-through-refresh-tokens">Issuing access tokens through refresh tokens</h3>
+<p>The section above demonstrates how to issue an access token given that you have
+the authorization code. This section extends that one, but applies to the case
+where you don't have the authorization code anymore (since it is used only once)
+and want to issue a new access token.</p>
+<p>To perform that, the same rules as for the previous section apply. That is the same
+URL (<code>https://accounts.runtastic.com/v1/as/token.oauth2</code>) and format is to be used here.</p>
+<p>What is changed is the body payload. In this case, the authentication itself occurs with the refresh token rather than the authorization code. The body
+payload for the HTTP request takes the following attributes:</p>
+<ul>
+<li><strong>grant_type</strong>: Its value must be the string <code>refresh_token</code></li>
+<li><strong>client_id</strong>: The <code>client_id</code> of your app</li>
+<li><strong>client_secret</strong>: The <code>client_secret</code> of your app</li>
+<li><strong>refresh_token</strong>: The refresh token that you previously received</li>
+<li><strong>redirect_uri</strong>: The <code>redirect_uri</code> that you used in the authorization URL
+(the one in the first step of the OAuth flow)</li>
+</ul>
+<p>The response payload will look like the following:</p>
+<pre><code class="language-json">{
+  &quot;access_token&quot;: &quot;3ShyuHkKPsWUFRMZlgwFq4&quot;,
+  &quot;token_type&quot;: &quot;Bearer&quot;,
+  &quot;expires_in&quot;: 7199
+}
+</code></pre>
+<h2 id="performing-authenticated-api-requests">Performing authenticated API requests</h2>
+<p>Once you have the access token, you can perform authenticated API requests.</p>
+<p>Just add the <code>Authorization</code> header to every API request. It takes the following
+form:</p>
+<pre><code>Authorization: Bearer {ACCESS_TOKEN}
+</code></pre>
+<p>For instance, if your access token is <code>sbfWbvBnG8jhbYBt1eJAoi</code>, then just add
+the following header to your requests:</p>
+<pre><code>Authorization: Bearer sbfWbvBnG8jhbYBt1eJAoi
+</code></pre>
+<p>Although the authentication is very simple, there are a few gotchas due to the
+fact that OAuth 2.0 access tokens have an expiry time. Please see the next
+section for more details on how to handle expired access tokens and best
+practices.</p>
+<h2 id="revoking-a-token">Revoking a token</h2>
+<p>It is possible to revoke a token, be it a refresh token or an access token.
+The revocation endpoint is implemented as specified in
+<a href="https://tools.ietf.org/html/rfc7009">RFC 7009</a>. It is located at
+<code>https://accounts.runtastic.com/v1/as/revoke_token.oauth2</code>.</p>
+<!-- theme: warning -->
+
+<blockquote>
+<p>In the case that the user requests that their account gets disconnected from adidas runtastic, it is mandatory that you call this endpoint to revoke all refresh tokens of this user.</p>
+</blockquote>
+<p>The contents of the request must be encoded as in the
+application/x-www-form-urlencoded MIME type.</p>
+<blockquote>
+<p>When a refresh token is revoked, all access tokens issued by it are automatically revoked as well.</p>
+</blockquote>
+<p>To revoke a token, just issue a POST request to that endpoint passing
+in the following parameters:</p>
+<ul>
+<li><strong>client_id</strong>: The <code>client_id</code> of your app</li>
+<li><strong>client_secret</strong>: The <code>client_secret</code> of your app</li>
+<li><strong>token</strong>: The token to be revoked</li>
+</ul>
+<p>On success, the response will have an empty body with a 200 status code.</p>
+<h2 id="access-token-best-practices">Access token best practices</h2>
+<p>Since OAuth 2.0 is rather complex, due to the inherent complexity of having a
+secure software system, this section aims to avoid issues when dealing with
+access token expiry times and refresh tokens.</p>
+<h3 id="access-token-expiration">Access token expiration</h3>
+<p>Access tokens will have a short expiration time. Usually not more than a few
+hours. Once an access token is expired, calling the API with it will yield
+the same results as calling it with an invalid token. That is because the
+token has, in fact, been invalidated.</p>
+<p>The access token may also expire before its expiry date. However, that should
+be considered an edge case and unlikely to happen often.</p>
+<p>See the "handling expired tokens" section below on how to handle token
+expiration.</p>
+<h3 id="refresh-token-expiration">Refresh token expiration</h3>
+<p>The refresh token does not expire.</p>
+<p>In general, this means the refresh token does not change. However, it can be
+revoked if it gets compromised (see <a href="#revoking-a-token">revoking a token</a>).</p>
+<h3 id="handling-expired-tokens">Handling expired tokens</h3>
+<p>An API call with an invalid or expired access token will result in a "401
+Unauthorized" response with the following JSON body payload:</p>
+<pre><code class="language-json">{
+  &quot;error&quot;: &quot;invalid_token&quot;,
+  &quot;error_description&quot;: &quot;The access token is invalid or has expired&quot;
+}
+</code></pre>
+<p>Your app must be prepared to handle expired access tokens at any time.
+In order to recover from an expired access token, your app has to request a new
+access token by using the refresh token. Remember that the refresh token does not expire. See section
+<a href="#issuing-access-tokens-through-refresh-tokens">Issuing access tokens through refresh tokens</a>
+for how to issue a new access token using the refresh token.</p>
+<p>It is possible to have more than one valid access token at the same time.
+This fact should make it easier to manage the access token. However, your app
+must not issue access tokens without any form of control in place, as that
+could negatively  impact our infrastructure. For instance, the app should not
+issue a new access token at the very beginning of an operation and then
+discard it after the operation has finished.</p>
+<!-- theme: warning -->
+
+<blockquote>
+<p>Your app <strong>must not</strong> issue access tokens without any form of control in place.</p>
+</blockquote>
+<p>Your app should try and keep only one valid access token at a time. Although
+this is not a strict requirement, it should be done in a best effort
+manner.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.indexes", "content.code.copy"], "search": "../../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.83f73b43.min.js"></script>
+      
+    
+  </body>
+</html>

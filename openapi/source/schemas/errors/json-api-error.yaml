@@ -1,0 +1,15 @@
+---
+title: JSON:API Error
+type: object
+properties:
+  status:
+    type: string
+  code:
+    type: string
+  title:
+    type: string
+  detail:
+    type: string
+required:
+- status
+- code

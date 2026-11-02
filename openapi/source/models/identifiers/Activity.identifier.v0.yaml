@@ -1,0 +1,18 @@
+---
+title: Activity Identifier
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+  type:
+    type: string
+    enum:
+    - activity
+required:
+- id
+- type
+x-examples:
+  Activity identifiers:
+    id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+    type: activity

@@ -1,0 +1,19 @@
+---
+title: Receiver.v0
+allOf:
+- "$ref": "./identifiers/Receiver.v0.yaml"
+- type: object
+  properties:
+    attributes:
+      "$ref": "./attributes/Receiver.attributes.v0.yaml"
+x-examples:
+  Reveiver v0 model:
+    id: b4f57128-687e-46f7-8f03-2d1ddfcf6eb5
+    type: receivers
+    attributes:
+      webhook_url: https://www.example.com
+      state: active
+      api_version: 0
+      created_at: '2021-01-14T06:19:41Z'
+      updated: '2021-01-14T06:19:41Z'
+      failure_reason: 

@@ -1,0 +1,168 @@
+---
+components:
+  headers:
+    X-Ratelimit-Limit-Hour:
+      schema:
+        type: integer
+      description: Maximum number of requests that can be done in the current hour
+    X-Ratelimit-Limit-Minute:
+      schema:
+        type: integer
+      description: Maximum number of requests that can be done in the current minute
+    X-Ratelimit-Remaining-Hour:
+      schema:
+        type: integer
+      description: Number of requests that still can be done in the current hour.
+        If the limit was reached, the value equals `0`.
+    X-Ratelimit-Remaining-Minute:
+      schema:
+        type: integer
+      description: Number of requests that still can be done in the current minute.
+        If the limit was reached, the value equals `0`.
+  parameters:
+    Partner-in-behalf-of-user-Access-Token:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: |-
+        Access token retrieved from the [Authorization Code OAuth flow](http://localhost:8000/authentication/v1/partner_in_behalf_of_user/).
+        Format: `Bearer {ACCESS_TOKEN}`
+    sort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - start_time
+        - end_time
+        - updated_at
+        - created_at
+        - "-start_time"
+        - "-end_time"
+        - "-updated_at"
+        - "-created_at"
+        default: "-start_time"
+        example: "-start_time"
+      description: Sort parameter
+    page-number:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number used for pagination
+      required: false
+    page-size:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 10
+      description: Page size used for pagination
+      required: false
+    filter-sport-type-name:
+      name: filter[sport_type_name]
+      in: query
+      schema:
+        type: string
+      description: Only activitites from this sport type will be returned [check the
+        list](https://runtastic.stoplight.io/docs/public-api-docs/docs/API/v0/sport_types.md)
+    activity_id:
+      name: activity_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 8b8203ea-699a-4222-b52a-349073db86e6
+      description: ID of the activity
+    Partner-Access-Token:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: |-
+        Access token retrieved from the [Client Credentials OAuth flow](http://localhost:8000/authentication/v1/partner/).
+        Format: `Bearer {ACCESS_TOKEN}`
+  securitySchemes:
+    Partner:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+          scopes: {}
+          refreshUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+      description: Client Credentials flow from RFC 6749 section 1.3.4. See http://localhost:8000/authentication/v1/partner/.
+    Partner-in-behalf-of-User:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+          scopes:
+            pa_identity: Identity information
+            pa_contact: Contact information
+            pa_location: Location information
+            pa_size: Size information
+            pa_purchase_info: Purchase information
+            pa_behavioural: Behavioural and Profile information
+            pa_community: Community information
+            pa_social_media: Social Media information
+            pa_device: Device information
+            pa_activity_read: View activity information
+            pa_activity_write: Create activity information
+            pa_activity: 'Activity information. DEPRECATED: use pa_activity_read and/or
+              pa_activity_write instead.'
+            pa_preference: Preference information
+            pa_creators_club: Creators Club information
+            openid: Application intends to use OIDC to verify the user's identity,
+              required to use the webhooks features
+          refreshUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+          authorizationUrl: https://accounts.runtastic.com/v1/as/authorization.oauth2?pfidpadapterid=refid&redirect_uri=YOUR_APP_CALLBACK_URL&state=OPTIONAL_CUSTOM_DATA
+      description: Authorization Code flow from RFC 6749 section 1.3.1. See http://localhost:8000/authentication/v1/partner_in_behalf_of_user/.
+  schemas: {}
+  responses:
+    error-403-forbidden:
+      description: Forbidden
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            additionalProperties: false
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    code:
+                      type: string
+                      enum:
+                      - FORBIDDEN
+                    status:
+                      type: string
+                      enum:
+                      - '403'
+                    title:
+                      type: string
+                    detail:
+                      type: string
+                  required:
+                  - code
+                  - status
+            required:
+            - errors
+          examples:
+            Insufficient scope:
+              value:
+                errors:
+                - code: FORBIDDEN
+                  detail: 'Insufficient scope. Required: pa_activity_read'
+                  status: '403'

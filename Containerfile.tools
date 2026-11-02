@@ -1,0 +1,10 @@
+FROM docker.io/library/ruby:3.3.6-alpine3.20
+
+RUN apk add --no-cache nodejs npm python3 py3-pip \
+    && python3 -m venv /opt/mkdocs \
+    && /opt/mkdocs/bin/pip install --no-cache-dir mkdocs-material==9.5.44 \
+    && npm install --global @stoplight/spectral-cli@6.13.1 \
+    && npm cache clean --force
+
+ENV PATH="/opt/mkdocs/bin:${PATH}"
+WORKDIR /workspace

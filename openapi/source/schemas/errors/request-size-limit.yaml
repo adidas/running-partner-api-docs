@@ -1,0 +1,8 @@
+---
+title: Request Size Limit Error
+type: object
+properties:
+  message:
+    type: string
+required:
+- message

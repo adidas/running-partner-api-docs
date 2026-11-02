@@ -1,0 +1,2145 @@
+---
+openapi: 3.0.0
+info:
+  title: Running App Partner API
+  version: '0.1'
+  contact:
+    name: Running App Partner API Team
+    email: partnerapi.digitalsports@adidas.com
+  description: |
+    Welcome to adidas Running App Partner API documentation!
+    The Running App Partner API is a REST API.
+    Request and response bodies are, in general, _UTF8 encoded_ and represented in a JSON format.
+    It makes use of standard HTTP status codes and verbs.
+    All traffic to and from the API must use TLS. This means all API calls must be with the HTTPS scheme.
+    The webhook system also only performs requests through HTTPS.
+    Also, all endpoints require authentication. See the Authentication section for more information.
+tags:
+- name: Activities
+- name: Webhooks
+servers:
+- url: https://partnerapi.runtastic.com
+  description: Production
+paths:
+  "/v0/activities":
+    get:
+      summary: List Activities
+      tags:
+      - Activities
+      operationId: get-v0-list-activities
+      description: "List activities from the authenticated user.\n\n<!-- theme: danger
+        -->\n> Do not use this endpoint to check for new activities as you have a
+        good chance of being rate limited. Our webhooks API allows you to get notified
+        whenever a user has created an activity. "
+      parameters:
+      - "$ref": "#/components/parameters/sort"
+      - "$ref": "#/components/parameters/page-number"
+      - "$ref": "#/components/parameters/page-size"
+      - "$ref": "#/components/parameters/filter-sport-type-name"
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_activities.index.v0"
+              examples:
+                Activities list:
+                  value:
+                    data:
+                    - id: 72fa7858-f293-4df0-9cbe-dd5b21e5c6a0
+                      type: activity
+                      attributes:
+                        sport_type: cycling
+                        start_time: 1596963316000
+                        end_time: 1596987088000
+                        start_time_timezone_offset: 7200000
+                        end_time_timezone_offset: 7200000
+                        distance: 43660
+                        duration: 10149133
+                        elevation_gain: 322
+                        elevation_loss: 319
+                        calories: 1526
+                        pause_duration: 13623990
+                        pulse_avg: 124
+                        pulse_max: 151
+                        weather_condition: sunny
+                        subjective_feeling: awesome
+                        surface: road
+                        longitude: 14.270083364099264
+                        latitude: 48.30641211010516
+                        temperature: 28.1
+                        notes: Nice bike ride with Kevin
+                    links:
+                      first: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=1&page%5Bsize%5D=1
+                      next: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=4&page%5Bsize%5D=1
+                      prev: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=2&page%5Bsize%5D=1
+                      last: https://partnerapi.runtastic.com/v0/activities?sort=-start_time&page%5Bnumber%5D=5&page%5Bsize%5D=1
+                    meta:
+                      overall_count: 5
+                    jsonapi:
+                      version: '1.0'
+          headers: {}
+        '400':
+          description: Bad Request
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_bad-request"
+              examples:
+                Invalid sport_type_name filter:
+                  value:
+                    errors:
+                    - code: BAD_REQUEST
+                      detail: Invalid sport type
+                      status: '400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          "$ref": "#/components/responses/error-403-forbidden"
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_read
+    post:
+      summary: Create Activity
+      operationId: post-v0-activities
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_bad-request"
+              examples:
+                Missing file:
+                  value:
+                    errors:
+                    - code: INVALID_MULTIPART_REQUEST
+                      detail: 'missing required sidecar resource: file'
+                      status: '400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Unauthorized:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          description: Forbidden
+          content:
+            application/vnd.api+json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      additionalProperties: false
+                      properties:
+                        code:
+                          type: string
+                          enum:
+                          - FORBIDDEN
+                        status:
+                          type: string
+                          enum:
+                          - '403'
+                        title:
+                          type: string
+                        detail:
+                          type: string
+                      required:
+                      - code
+                      - status
+                required:
+                - errors
+              examples:
+                Insufficient scope:
+                  value:
+                    errors:
+                    - code: FORBIDDEN
+                      detail: 'Insufficient scope. Required: pa_activity_write'
+                      status: '403'
+        '413':
+          description: Request Entity Too Large
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_request-size-limit"
+              examples:
+                Request size limit exceeded:
+                  value:
+                    message: Request size limit exceeded
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_write
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              "$ref": "#/components/schemas/models_requests_body_activities.import.v0"
+            examples: {}
+        description: "You need to send a multipart request that consists of a file
+          and the description text.\n\nAn example would look like this:\n```text\nPOST
+          /v0/activities HTTP/1.1\nAuthorization: Bearer xxx\nAccept: */*\nHost: partnerapi.runtastic.com\nAccept-Encoding:
+          gzip, deflate, br\nConnection: keep-alive\nContent-Type: multipart/form-data;
+          boundary=--------------------------581243075298011649628917\nContent-Length:
+          206326\n \n----------------------------581243075298011649628917\nContent-Disposition:
+          form-data; name=\"file\"; filename=\"activity_12485610914.gpx\"\n<activity_12485610914.gpx>\n----------------------------581243075298011649628917\nContent-Disposition:
+          form-data; name=\"description\"\nsome notes about my run\n----------------------------581243075298011649628917--\n``` "
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      description: "Create an activity based on a FIT/GPX/TCX file.\n\nIt expects
+        to receive a multipart form with the attributes `file` and `description`.
+        The activity will be associated to the authenticated user.\n\nThe request
+        will NOT fail if the file content is invalid or truncated, since file validation
+        and processing happens asynchronously.\n\n<!--\ntype: tab\ntitle: General
+        validation rules\n-->\n\n- The `file` part must be a file upload, do not send
+        xml as text\n- The filename of the uploaded file must end in either one of
+        `.gpx`, `.tcx` or `.fit`\n- If the sport type is none of the ones we have
+        defined, we will fallback to \"other\"\n\nSee the other two tabs to learn
+        about how the FIT, GPX or TCX files themselves need to look like.\n\n<!--\ntype:
+        tab\ntitle: FIT format info\n-->\n\n## FIT Format\n\nThe Flexible and Interoperable
+        Data Transfer (FIT) protocol is a format designed specifically for the storing
+        and sharing of data that originates from sport, fitness and health devices.
+        It is specifically designed to be compact, interoperable and extensible.\n\nRunning App
+        has the ability to process FIT Activity File (FIT_FILE_TYPE = 4) as defined
+        in the official [FIT SDK](https://developer.garmin.com/fit/overview/).\n\nThe
+        FIT protocol defines different messages and data fields, here is a list of
+        fields grouped by message type that are used by Runtastic:\n\n**Supported
+        session message attributes**\n```\n  timestamp\n  start_time\n  sport\n  sub_sport\n
+        \ total_timer_time\n  total_elapsed_time\n  total_distance\n  total_calories\n
+        \ total_ascent\n  total_descent\n  max_speed\n  enhanced_max_speed\n```\n\n**Supported
+        record message attributes**\n```\n  timestamp\n  cadence\n  heart_rate\n  speed\n
+        \ enhanced_speed\n  altitude\n  enhanced_altitude\n  position_lat\n  position_long\n
+        \ distance\n  temperature  \n```\n\n**Supported event message attributes**\n```\n
+        \ timestamp\n  event\n  event_type\n```\n\n**Sport type handling**\n\nRuntastic
+        supports the following value combinations for the `sport` and `sub_sport`
+        values. You always need to provide a value for `sport` if you provide a value
+        for `sub_sport`.\n\nIf you do not provide any `sport` value, Runtastic will
+        assume a sport type of \"other\". If you provide values that don't match the
+        ones in the following table, Runtastic treats it as if you did not provide
+        a value. E.g. `sport=cycling` and `sub_sport=monocycle` (monocyle is not defined)
+        would therefore be equivalent to providing `sport=cycling` and not providing
+        `sub_sport`.\n\n| sport \t\t  | sub_sport  \t\t\t \t\t     | resulting runtastic
+        sport type\n|---|---|---|\n| aerobics |  | aerobics |\n| alpine_skiing |  |
+        skiing |\n| alpine_skiing | backcountry | back_country_skiing |\n| alpine_skiing
+        | resort | skiing |\n| american_football |  | american_football |\n| back_country_skiing
+        |  | back_country_skiing |\n| badminton |  | badminton |\n| baseball |  |
+        baseball |\n| basketball |  | basketball |\n| beach_volleyball |  | beach_volleyball
+        |\n| biathlon |  | biathlon |\n| biking |  | cycling |\n| boating |  | sailing
+        |\n| body_transformation |  | body_transformation |\n| bodyweight_training
+        |  | bodyweight_training |\n| bouldering |  | bouldering |\n| boxing |  |
+        boxing |\n| butt_training |  | butt_training |\n| calisthenics |  | calisthenics
+        |\n| cheerleading |  | cheerleading |\n| climbing |  | climbing |\n| cricket
+        |  | cricket |\n| cross_country_skiing |  | crosscountryskiing |\n| cross_country_skiing
+        | skate_skiing | crosscountryskiing |\n| crosscountryskiing |  | crosscountryskiing
+        |\n| cross_skating |  | cross_skating |\n| crossfit |  | crossfit |\n| curling
+        |  | curling |\n| cycling |  | cycling |\n| cycling | bmx | cycling |\n| cycling
+        | commuting | cycling |\n| cycling | cyclocross | cycling |\n| cycling | downhill
+        | mountainbiking |\n| cycling | e_bike_fitness | e_biking |\n| cycling | e_bike_mountain
+        | mountainbiking |\n| cycling | gravel_cycling | cycling |\n| cycling | hand_cycling
+        | handbike |\n| cycling | indoor_cycling | ergometer |\n| cycling | mixed_surface
+        | cycling |\n| cycling | mountain | mountainbiking |\n| cycling | recumbent
+        | cycling |\n| cycling | road | racecycling |\n| cycling | spin | spinning
+        |\n| cycling | track_cycling | racecycling |\n| cycling | virtual_activity
+        | virtual_cycling |\n| dancing |  | dancing |\n| diving |  | diving |\n| diving
+        | apnea_diving | diving |\n| diving | apnea_hunting | diving |\n| diving |
+        gauge_diving | diving |\n| diving | multi_gas_diving | diving |\n| diving
+        | single_gas_diving | diving |\n| driving |  | driving |\n| e_biking |  |
+        e_biking |\n| e_biking | e_bike_fitness | e_biking |\n| e_sports |  | e_sports
+        |\n| elliptical |  | elliptical |\n| ergometer |  | ergometer |\n| fencing
+        |  | fencing |\n| field_hockey |  | field_hockey |\n| fishing |  | other |\n|
+        fitness_equipment |  | other |\n| fitness_equipment | elliptical | elliptical
+        |\n| fitness_equipment | indoor_cycling | ergometer |\n| fitness_equipment
+        | indoor_rowing | rowing_machine |\n| fitness_equipment | indoor_skiing |
+        skiing |\n| fitness_equipment | indoor_walking | strolling |\n| fitness_equipment
+        | pilates | pilates |\n| fitness_equipment | stair_climbing | stair_climbing
+        |\n| fitness_equipment | treadmill | treadmill |\n| floor_climbing |  | stair_climbing
+        |\n| flying |  | other |\n| flying | rc_drone | other |\n| flying | wingsuit
+        | other |\n| freecrossen |  | freecrossen |\n| frisbee |  | frisbee |\n| generic
+        |  | other |\n| golf |  | golfing |\n| golfing |  | golfing |\n| gymnastics
+        |  | gymnastics |\n| handball |  | handball |\n| handbike |  | handbike |\n|
+        hang_gliding |  | paragliding |\n| hiking |  | hiking |\n| horseback_riding
+        |  | riding |\n| hunting |  | other |\n| ice_hockey |  | ice_hockey |\n| ice_skating
+        |  | ice_skating |\n| ice_stock |  | ice_stock |\n| inline_skating |  | skating
+        |\n| jumping_rope |  | jumping_rope |\n| jumpmaster |  | other |\n| kayaking
+        |  | kayaking |\n| kayaking | whitewater | kayaking |\n| kite_skiing |  |
+        kite_skiing |\n| kite_surfing |  | kite_surfing |\n| kitesurfing |  | kite_surfing
+        |\n| lacrosse |  | lacrosse |\n| leg_training |  | leg_training |\n| martial_arts
+        |  | martial_arts |\n| meditation |  | meditation |\n| motorbiking |  | motorbiking
+        |\n| motorcycling |  | motorbiking |\n| motorcycling | atv | motorbiking |\n|
+        motorcycling | motocross | motorbiking |\n| mountainbiking |  | mountainbiking
+        |\n| mountaineering |  | hiking |\n| multisport |  | other |\n| nordicwalking
+        |  | nordicwalking |\n| olympic_weightlifting |  | olympic_weightlifting |\n|
+        other |  | other |\n| paddling |  | kayaking |\n| padel |  | padel |\n| paragliding
+        |  | paragliding |\n| pilates |  | pilates |\n| plogging |  | plogging |\n|
+        pole_dancing |  | pole_dancing |\n| powerlifting |  | powerlifting |\n| pullups
+        |  | pullups |\n| pushups |  | pushups |\n| racecycling |  | racecycling |\n|
+        rafting |  | kayaking |\n| rafting | whitewater | kayaking |\n| riding |  |
+        riding |\n| rock_climbing |  | climbing |\n| rowing_machine |  | rowing_machine
+        |\n| rowing |  | rowing |\n| rugby |  | rugby |\n| running |  | running |\n|
+        running | indoor_running | running |\n| running | street | running |\n| running
+        | track | running |\n| running | trail | trail_running |\n| running | treadmill
+        | treadmill |\n| running | virtual_activity | virtual_running |\n| sailing
+        |  | sailing |\n| sailing | sail_race | sailing |\n| scootering |  | scootering
+        |\n| situps |  | situps |\n| sixpack |  | sixpack |\n| skateboarding |  |
+        skateboarding |\n| skating |  | skating |\n| skiing |  | skiing |\n| skike
+        |  | skike |\n| sky_diving |  | skydiving |\n| skydiving |  | skydiving |\n|
+        snowboarding |  | snowboarding |\n| snowboarding | backcountry | snowboarding
+        |\n| snowboarding | resort | snowboarding |\n| snowmobiling |  | other |\n|
+        snowshoeing |  | snowshoeing |\n| sledding |  | sledding |\n| smovey_exercising
+        |  | smovey_exercising |\n| smovey_walking |  | smovey_walking |\n| snowball_fight
+        |  | snowball_fight |\n| snowman_building |  | snowman_building |\n| soccer
+        |  | soccer |\n| speed_skiing |  | speed_skiing |\n| spinning |  | spinning
+        |\n| squash |  | squash |\n| squats |  | squats |\n| stand_up_paddleboarding
+        |  | standup_paddling |\n| stair_climbing |  | stair_climbing |\n| standup_paddling
+        |  | standup_paddling |\n| strength_training |  | strength_training |\n| stretching
+        |  | stretching |\n| strolling |  | strolling |\n| surfing |  | surfing |\n|
+        suspension_training |  | suspension_training |\n| swimming |  | swimming |\n|
+        swimming | lap_swimming | swimming |\n| swimming | open_water | swimming |\n|
+        tactical |  | other |\n| tennis |  | tennis |\n| tennis | exercise | tennis
+        |\n| tennis | match | tennis |\n| tennis | warm_up | tennis |\n| tabata |
+        \ | tabata |\n| table_tennis |  | table_tennis |\n| track_field |  | track_field
+        |\n| trail_running |  | trail_running |\n| training |  | strength_training
+        |\n| training | cardio_training | aerobics |\n| training | flexibility_training
+        | other |\n| training | strength_training | strength_training |\n| training
+        | yoga | yoga |\n| trampoline |  | trampoline |\n| transition |  | other |\n|
+        transition | bike_to_run_transition | other |\n| transition | run_to_bike_transition
+        | other |\n| transition | swim_to_bike_transition | other |\n| treadmill |
+        \ | treadmill |\n| via_ferrata |  | via_ferrata |\n| virtual_cycling |  |
+        virtual_cycling |\n| virtual_running |  | virtual_running |\n| volleyball
+        |  | volleyball |\n| wakeboarding |  | wakeboarding |\n| walking |  | strolling
+        |\n| walking | casual_walking | strolling |\n| walking | indoor_walking |
+        strolling |\n| walking | speed_walking | strolling |\n| water_skiing |  |
+        other |\n| wheelchair |  | wheelchair |\n| windsurfing |  | windsurfing |\n|
+        yoga |  | yoga |\n| zumba |  | zumba |\n\n<!--\ntype: tab\ntitle: GPX format
+        info\n-->\n\n## GPX Schema for Activity Imports\n\nGPX is a widely used XML
+        format for geospatial data. \n\n**adidas Runtastic Partner API** supports
+        the following schema definitions:\n- GPX schema v1.1 [(by Topografix)][gpx-xsd]\n-
+        Track Point Extension v1 [(by Garmin)][garmin-track-point-extension-v1]\n\nThe
+        following sections describe how **adidas Runtastic** creates a sport activity
+        based on your GPX file.\n\n<!-- theme: warning -->\n> Not supported extensions
+        or custom XML tags will be ignored during the GPX import.\n\n### Sport Activity
+        Data\n\n#### GPS Points\n\n- Schema: [GPX v1.1][gpx-xsd] \n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Two GPS points\nlineNumbers: true\n-->\n```xml\n<trk>\n  <trkseg>\n    <trkpt
+        lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:51.000Z</time>\n    </trkpt>\n
+        \   <trkpt lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:52.000Z</time>\n    </trkpt>\n
+        \   ...\n  <trkseg>\n</trk>\n```\n</details>  \n\nPoint tags (`<trkpt>`) inside
+        a track segment tag (`<trkseg>`) will be parsed as GPS points. The `<trkseg>`
+        needs to be inside of a track tag (`<trk>`) as defined in the specification.\n\n#####
+        GPS Point Structure\n\n**adidas Runtastic** utilizes the following attributes
+        of a `<trkpt>`, as well as additional nested tags, to build a GPS point:\n\n|
+        GPS point attribute \t| Unit                    \t| XML Reference                     \t|\n|:---------:\t|-------------------------\t|-----------------------------------\t|\n|
+        Latitude  \t| Decimal degrees ([WSG84][wsg-84]) \t| `lat` attribute of `<trkpt>`|\n|
+        Longitude \t| Decimal degrees ([WSG84](wsg-84)) \t| `lon` attribute of `<trkpt>`|\n|
+        Elevation \t| Meters                  \t| `<ele>` tag value nested inside
+        `<trkpt>`|\n| Time      \t| ISO8601 timestamp       \t| `<time>` tag value
+        nested inside `<trkpt>`|\n\n##### Derived Sport Activity Metrics\n\nBased
+        on the attributes listed above, metrics like *distance*, *duration*, *speed*,
+        *elevation gain / loss* and *maximum speed* are calculated.\n\n#### Sport
+        Type\n\n- Schema: [GPX v1.1][gpx-xsd]\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Example of a running sport activity\nlineNumbers: true\n-->\n```xml\n<trk>\n
+        \ <type>running</type>\n  ...\n</trk>\n```\n</details> \n\nThe name of the
+        sport type is extracted from the `<type>` tag, which is nested inside a track
+        tag (`<trk>`).\n\nYou can find a list of supported sport types down below.\n\n<details>\n
+        \ <summary>List of supported sport types</summary>\n\n  - aerobics\n - alpine_skiing\n
+        - american_football\n - badminton\n - baseball\n - basketball\n - beach_volleyball\n
+        - biathlon\n - biking\n - boating\n - body_transformation\n - bodyweight_training\n
+        - bouldering\n - boxing\n - butt_training\n - calisthenics\n - cheerleading\n
+        - cricket\n - cross_country_skiing\n - cross_skating\n - crossfit\n - curling\n
+        - cycling\n - dancing\n - diving\n - driving\n - e_biking\n - e_sports\n -
+        fencing\n - field_hockey\n - fishing\n - fitness_equipment\n - floor_climbing\n
+        - flying\n - freecrossen\n - frisbee\n - generic\n - golf\n - gymnastics\n
+        - handball\n - hang_gliding\n - hiking\n - horseback_riding\n - hunting\n
+        - ice_hockey\n - ice_skating\n - ice_stock\n - inline_skating\n - jumping_rope\n
+        - jumpmaster\n - kayaking\n - kite_skiing\n - kitesurfing\n - lacrosse\n -
+        leg_training\n - martial_arts\n - meditation\n - motorcycling\n - mountaineering\n
+        - multisport\n - nordicwalking\n - olympic_weightlifting\n - paddling\n -
+        padel\n - plogging\n - pole_dancing\n - powerlifting\n - pullups\n - pushups\n
+        - rafting\n - rock_climbing\n - rowing\n - rugby\n - running\n - sailing\n
+        - scootering\n - situps\n - sixpack\n - skateboarding\n - skike\n - sky_diving\n
+        - snowboarding\n - snowmobiling\n - snowshoeing\n - sledding\n - smovey_exercising\n
+        - smovey_walking\n - snowball_fight\n - snowman_building\n - soccer\n - speed_skiing\n
+        - squash\n - squats\n - stand_up_paddleboarding\n - stretching\n - surfing\n
+        - suspension_training\n - swimming\n - tactical\n - tennis\n - tabata\n -
+        table_tennis\n - track_field\n - training\n - trampoline\n - transition\n
+        - via_ferrata\n - volleyball\n - wakeboarding\n - walking\n - water_skiing\n
+        - wheelchair\n - windsurfing\n - zumba\n</details>\n\n#### Heart Rate\n\n-
+        Schema: [Track Point Extension v1][garmin-track-point-extension-v1]\n- Unit:
+        Beats per minute `[bpm]`\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Example of a heart rate value (line 7)\nlineNumbers: true\n-->\n```xml\n<gpx
+        xmlns:ns3=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" ...
+        > \n  <trk>\n    <trkseg>\n      <trkpt lat=\"47.6409219391644001007080078125\"
+        lon=\"13.61675835214555263519287109375\">\n        ...\n        <extensions>\n
+        \         <ns3:TrackPointExtension>\n            <ns3:hr>103</ns3:hr>\n          </ns3:TrackPointExtension>\n
+        \       </extensions>\n      </trkpt>\n      ...\n    <trkseg>\n  </trk>\n</gpx>\n```\n</details>
+        \n\nHeart rate information is extracted from the `<hr>` tag and is stored
+        along side the corresponding GPS point. \n\n#### Temperature\n\n- Schema:
+        [Track Point Extension v1][garmin-track-point-extension-v1]\n- Unit: Centigrade
+        `[°C]`\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle: Example
+        of a air temperature value (line 7)\nlineNumbers: true\n-->\n```xml\n<gpx
+        xmlns:ns3=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" ...
+        > \n  <trk>\n    <trkseg>\n      <trkpt lat=\"47.6409219391644001007080078125\"
+        lon=\"13.61675835214555263519287109375\">\n        ...\n        <extensions>\n
+        \         <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \         </ns3:TrackPointExtension>\n        </extensions>\n      </trkpt>\n
+        \     ...\n    <trkseg>\n  </trk>\n</gpx>\n```\n</details> \n\n**adidas Runtastic**
+        pulls air temperature data from the `<atemp>` tag and calculates the [median](https://en.wikipedia.org/wiki/Median)
+        of the entire sport activity.\n\n### Complete GPX import example\n\n<!--\ntitle:
+        Example of a running activity with air temperature and heart rate measurements
+        for import\nlineNumbers: true\n-->\n```xml\n<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx
+        xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/11.xsd\"\n
+        \ xmlns=\"http://www.topografix.com/GPX/1/1\"\n  xmlns:ns3=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"\n
+        \ xmlns:ns2=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n
+        \ <trk>\n    <name>A Running Activity</name>\n    <type>running</type>\n    <trkseg>\n
+        \     <trkpt lat=\"47.63674112968146800994873046875\" lon=\"13.6338529922068119049072265625\">\n
+        \       <ele>568.20001220703125</ele>\n        <time>2015-07-11T03:08:14.000Z</time>\n
+        \       <extensions>\n          <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \           <ns3:hr>160</ns3:hr>\n          </ns3:TrackPointExtension>\n        </extensions>\n
+        \     </trkpt>\n      <trkpt lat=\"47.63678236864507198333740234375\" lon=\"13.63387294113636016845703125\">\n
+        \       <ele>568.79998779296875</ele>\n        <time>2015-07-11T03:08:16.000Z</time>\n
+        \       <extensions>\n          <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \           <ns3:hr>159</ns3:hr>\n          </ns3:TrackPointExtension>\n        </extensions>\n
+        \     </trkpt>\n      <trkpt lat=\"47.6368047483265399932861328125\" lon=\"13.63388140685856342315673828125\">\n
+        \       <ele>569.20001220703125</ele>\n        <time>2015-07-11T03:08:17.000Z</time>\n
+        \       <extensions>\n          <ns3:TrackPointExtension>\n            <ns3:atemp>8.0</ns3:atemp>\n
+        \           <ns3:hr>160</ns3:hr>\n          </ns3:TrackPointExtension>\n        </extensions>\n
+        \     </trkpt>     \n    </trkseg>\n  </trk>\n</gpx>\n\n```\n\n[gpx-xsd]:
+        https://www.topografix.com/GPX/1/1/gpx.xsd\n[garmin-track-point-extension-v1]:
+        https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\n[wsg-84]: https://en.wikipedia.org/wiki/World_Geodetic_System\n<!--\ntype:
+        tab\ntitle: TCX format info\n-->\n\n## TCX Format\n\nTCX is another XML based
+        format to exchange trace data. \n**adidas Runtastic Partner API** supports
+        the following attributes (supported attributes are listed in []):\n* Activities\n
+        \ * Activity[Sport]\n  * Id (= Start time of activity)\n  * Lap\n    * TotalTimeSeconds\n
+        \   * DistanceMeters\n    * MaximumSpeed\n    * Calories\n    * Track\n      *
+        Trackpoint\n        * Time\n        * Position\n          * LatitudeDegrees\n
+        \         * LongitudeDegrees\n        * AltitudeMeters\n        * DistanceMeters\n
+        \       * HeartRateBpm\n          * Value\n\n<!-- theme: info -->\n> All laps
+        and tracks inside one activity are combined on our side. If there are multiple
+        activities in one tcx file, we import them as separate activities.\n\nCompared
+        to a GPX file, a TCX file can also be created without having GPS coordinates
+        available,\nso it can be used to export indoor sports data including a heart-rate
+        trace for example.\n\n<!-- theme: warning -->\n> Not supported extensions
+        or custom XML tags will be ignored during the TCX import.\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Two points\nlineNumbers: true\n-->\n```xml\n  <Activities>\n    <Activity
+        Sport=\"biking\">\n      <Id>2010-06-26T10:06:11Z</Id>\n      <Lap StartTime=\"2010-06-26T10:06:11Z\">\n
+        \       <TotalTimeSeconds>1.0</TotalTimeSeconds>\n        <DistanceMeters>9762.4433594</DistanceMeters>\n
+        \       <MaximumSpeed>15.2404995</MaximumSpeed>\n        <Calories>493</Calories>\n
+        \       <Track>\n          <Trackpoint>\n            <Time>2010-06-26T10:06:11Z</Time>\n
+        \           <Position>\n              <LatitudeDegrees>40.7780135</LatitudeDegrees>\n
+        \             <LongitudeDegrees>-73.9665795</LongitudeDegrees>\n            </Position>\n
+        \           <AltitudeMeters>36.1867676</AltitudeMeters>\n            <DistanceMeters>0.0629519</DistanceMeters>\n
+        \           <HeartRateBpm xsi:type=\"HeartRateInBeatsPerMinute_t\">\n              <Value>148</Value>\n
+        \           </HeartRateBpm>\n          </Trackpoint>\n          <Trackpoint>\n
+        \           <Time>2010-06-26T10:06:12Z</Time>\n            <Position>\n              <LatitudeDegrees>40.7780136</LatitudeDegrees>\n
+        \             <LongitudeDegrees>-73.9665778</LongitudeDegrees>\n            </Position>\n
+        \           <AltitudeMeters>35.2254639</AltitudeMeters>\n            <DistanceMeters>0.1698548</DistanceMeters>\n
+        \           <HeartRateBpm xsi:type=\"HeartRateInBeatsPerMinute_t\">\n              <Value>148</Value>\n
+        \           </HeartRateBpm>\n          </Trackpoint>\n        </Track>\n      </Lap>\n
+        \   </Activity>\n  </Activities>\n```\n</details>  \n\n##### Derived Sport
+        Activity Metrics\n\nBased on the attributes listed above, overall metrics
+        like distance, duration, elevation gain / loss, as well as average and maximum
+        speed are calculated.\n\n#### Sport Type\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Example of an alpine skiing sport activity\nlineNumbers: true\n-->\n```xml\n<Activities>\n
+        \ <Activity Sport=\"alpine_skiing\">\n  ...\n  </Activity>\n</Activities>\n```\n</details>
+        \n\nThe name of the sport type is extracted from the `Sport` attribute in
+        the `<Activities>` tag, \nwhich is nested inside a activities tag (`<Activities>`).\n\nYou
+        can find a list of supported sport types down below.\n\n<details>\n  <summary>List
+        of supported sport types</summary>\n\n  - aerobics\n - alpine_skiing\n - american_football\n
+        - badminton\n - baseball\n - basketball\n - beach_volleyball\n - biathlon\n
+        - biking\n - boating\n - body_transformation\n - bodyweight_training\n - bouldering\n
+        - boxing\n - butt_training\n - calisthenics\n - cheerleading\n - cricket\n
+        - cross_country_skiing\n - cross_skating\n - crossfit\n - curling\n - cycling\n
+        - dancing\n - diving\n - driving\n - e_biking\n - e_sports\n - fencing\n -
+        field_hockey\n - fishing\n - fitness_equipment\n - floor_climbing\n - flying\n
+        - freecrossen\n - frisbee\n - generic\n - golf\n - gymnastics\n - handball\n
+        - hang_gliding\n - hiking\n - horseback_riding\n - hunting\n - ice_hockey\n
+        - ice_skating\n - ice_stock\n - inline_skating\n - jumping_rope\n - jumpmaster\n
+        - kayaking\n - kite_skiing\n - kitesurfing\n - lacrosse\n - leg_training\n
+        - martial_arts\n - meditation\n - motorcycling\n - mountaineering\n - multisport\n
+        - nordicwalking\n - olympic_weightlifting\n - paddling\n - padel\n - plogging\n
+        - pole_dancing\n - powerlifting\n - pullups\n - pushups\n - rafting\n - rock_climbing\n
+        - rowing\n - rugby\n - running\n - sailing\n - scootering\n - situps\n - sixpack\n
+        - skateboarding\n - skike\n - sky_diving\n - snowboarding\n - snowmobiling\n
+        - snowshoeing\n - sledding\n - smovey_exercising\n - smovey_walking\n - snowball_fight\n
+        - snowman_building\n - soccer\n - speed_skiing\n - squash\n - squats\n - stand_up_paddleboarding\n
+        - stretching\n - surfing\n - suspension_training\n - swimming\n - tactical\n
+        - tennis\n - tabata\n - table_tennis\n - track_field\n - training\n - trampoline\n
+        - transition\n - via_ferrata\n - volleyball\n - wakeboarding\n - walking\n
+        - water_skiing\n - wheelchair\n - windsurfing\n - zumba\n</details>\n\n<!--
+        type: tab-end -->\n\n---"
+      tags:
+      - Activities
+  "/v0/activities/{activity_id}":
+    parameters:
+    - "$ref": "#/components/parameters/activity_id"
+    get:
+      summary: Retrieve Activity
+      tags:
+      - Activities
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_activities.retrieve.v0"
+              examples:
+                Activity details:
+                  value:
+                    data:
+                      id: 72fa7858-f293-4df0-9cbe-dd5b21e5c6a0
+                      type: activity
+                      attributes:
+                        sport_type: cycling
+                        start_time: 1596963316000
+                        end_time: 1596987088000
+                        start_time_timezone_offset: 7200000
+                        end_time_timezone_offset: 7200000
+                        distance: 43660
+                        duration: 10149133
+                        elevation_gain: 322
+                        elevation_loss: 319
+                        calories: 1526
+                        pause_duration: 13623990
+                        pulse_avg: 124
+                        pulse_max: 151
+                        weather_condition: sunny
+                        subjective_feeling: awesome
+                        surface: road
+                        longitude: 14.270083364099264
+                        latitude: 48.30641211010516
+                        temperature: 28.1
+                        notes: Nice bike ride with Kevin
+                    jsonapi:
+                      version: '1.0'
+          headers: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          "$ref": "#/components/responses/error-403-forbidden"
+        '429':
+          description: Too Many Requests
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_read
+      operationId: get-v0-activities-activity_id
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      description: Retrieve an activity from the authenticated user
+  "/v0/activities/{activity_id}/traces/gpx":
+    parameters:
+    - "$ref": "#/components/parameters/activity_id"
+    get:
+      summary: Retrieve Activity Trace
+      tags:
+      - Activities
+      responses:
+        '200':
+          description: GPX file content
+          content:
+            application/gpx+xml:
+              schema:
+                type: string
+                format: binary
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '403':
+          "$ref": "#/components/responses/error-403-forbidden"
+        '404':
+          description: Not Found
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_not-found"
+              examples:
+                Trace Not Found:
+                  value:
+                    errors:
+                    - code: NOT_FOUND
+                      status: '404'
+        '429':
+          description: Too Many Requests
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                Rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - pa_activity_read
+      operationId: get-v0-retrieve-activity-trace
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+      description: "\nRetrieve GPS trace of an activity in GPX format.\n\n## GPX Schema
+        for Activty Exports\n\nGPX is a widely used XML format for geospatial data.
+        \n\n**adidas Running App** uses the following schema definitions:\n- GPX schema
+        v1.1 [(by Topografix)][gpx-xsd]\n- Track Point Extension v1 [(by Garmin)][garmin-track-point-extension-v1]\n\nThe
+        following sections describe how **adidas Running App** exports a sport activity
+        trace in GPX format.\n\n### Sport Activity Data\n\n#### GPS Points\n\n- Schema:
+        [GPX v1.1][gpx-xsd] \n\nThe GPX will contain track segment tag (`<trkseg>`)
+        inside the track tag (`<trk>`), which will contain all GPS points as track
+        points (`<trkpt>`).\n\n##### GPS Point Structure\n\n**adidas Running App** utilizes
+        the following attributes of a `<trkpt>`, as well as additional nested tags,
+        to export a GPS point:\n\n| GPS point attribute \t| Unit                    \t|
+        XML Reference                     \t|\n|:---------:\t|-------------------------\t|-----------------------------------\t|\n|
+        Latitude  \t| Decimal degrees ([WSG84][wsg-84]) \t| `lat` attribute of `<trkpt>`|\n|
+        Longitude \t| Decimal degrees ([WSG84](wsg-84)) \t| `lon` attribute of `<trkpt>`|\n|
+        Elevation \t| Meters                  \t| `<ele>` tag value nested inside
+        `<trkpt>`|\n| Time      \t| ISO8601 timestamp       \t| `<time>` tag value
+        nested inside `<trkpt>`|\n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle:
+        Two GPS points\nlineNumbers: true\n-->\n```xml\n<trk>\n  <trkseg>\n    <trkpt
+        lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:51.000Z</time>\n    </trkpt>\n
+        \   <trkpt lat=\"47.6409219391644001007080078125\" lon=\"13.61675835214555263519287109375\">\n
+        \     <ele>502</ele>\n      <time>2015-07-11T03:00:52.000Z</time>\n    </trkpt>\n
+        \   ...\n  <trkseg>\n</trk>\n```\n</details>  \n\n#### Heart Rate\n\n- Schema:
+        [Track Point Extension v1][garmin-track-point-extension-v1]\n- Namespace:
+        `gpxtpx`\n- Unit: Beats per minute `[bpm]`\n\nHeart rate information is included
+        in the `<gpxtpx:hr>` tag and is stored alongside the corresponding GPS point.
+        \n\n<details>\n  <summary>Example</summary>\n\n<!--\ntitle: Example of a heart
+        rate value (line 7)\nlineNumbers: true\n-->\n```xml\n<gpx xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\"
+        ... > \n  <trk>\n    <trkseg>\n      <trkpt lat=\"47.6409219391644001007080078125\"
+        lon=\"13.61675835214555263519287109375\">\n        ...\n        <extensions>\n
+        \         <gpxtpx:TrackPointExtension>\n            <gpxtpx:hr>103</gpxtpx:hr>\n
+        \         </gpxtpx:TrackPointExtension>\n        </extensions>\n      </trkpt>\n
+        \     ...\n    <trkseg>\n  </trk>\n</gpx>\n```\n</details> \n\n### Metadata\n\n-
+        Schema: [GPX v1.1][gpx-xsd]\n\nThe metadata section includes name, link and
+        time information inside the metadata tag (`<metadata>`).\n\nThe time tag (`<time>`)
+        contains the start time of the activity.\n\nThe name tag (`<name>`) shows
+        the name of the activity which starts with \"runtastic\\_\" and is followed
+        by the activity's start date and time, e.g `runtastic_20220629_0928`. \n\n###
+        Complete GPX export example\n\n<!--\ntitle: Example of a running activity
+        with heart rate measurements for export\nlineNumbers: true\n-->\n```xml\n<?xml
+        version=\"1.0\" encoding=\"UTF-8\"?>\n<gpx creator=\"Runtastic: Life is short
+        - live long, http://www.runtastic.com\" version=\"1.1\" xmlns=\"http://www.topografix.com/GPX/1/1\"
+        xmlns:gpxtpx=\"http://www.garmin.com/xmlschemas/TrackPointExtension/v1\" xmlns:gpxx=\"http://www.garmin.com/xmlschemas/GpxExtensions/v3\"
+        xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1
+        http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3
+        http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1
+        http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\">\n  <metadata>\n
+        \   <name>runtastic_20220629_0928</name>\n    <link href=\"http://www.runtastic.com\">\n
+        \     <text>runtastic</text>\n    </link>\n    <time>2022-06-29T09:28:32.000Z</time>\n
+        \ </metadata>\n  <trk>\n    <name>runtastic_20220629_0928</name>\n    <link
+        href=\"http://www.runtastic.com/sport-sessions/790cd15c-cb66-44de-8fb4-d883cfd7ffef\">\n
+        \     <text>Visit this link to view this activity on runtastic.com</text>\n
+        \   </link>\n    <trkseg>\n      <trkpt lat=\"50.469200134277344\" lon=\"6.095468521118164\">\n
+        \       <ele>492.0</ele>\n        <time>2022-06-29T09:28:32.000Z</time>\n
+        \       <extensions>\n          <gpxtpx:TrackPointExtension>\n            <gpxtpx:hr>128</gpxtpx:hr>\n
+        \         </gpxtpx:TrackPointExtension>\n        </extensions>\n      </trkpt>\n
+        \     <trkpt lat=\"50.4691047668457\" lon=\"6.095335483551025\">\n        <ele>492.0</ele>\n
+        \       <time>2022-06-29T09:28:35.000Z</time>\n        <extensions>\n          <gpxtpx:TrackPointExtension>\n
+        \           <gpxtpx:hr>130</gpxtpx:hr>\n          </gpxtpx:TrackPointExtension>\n
+        \       </extensions>\n      </trkpt>\n      ...\n    </trkseg>\n  </trk>\n</gpx>\n```\n\n[gpx-xsd]:
+        https://www.topografix.com/GPX/1/1/gpx.xsd\n[garmin-track-point-extension-v1]:
+        https://www8.garmin.com/xmlschemas/TrackPointExtensionv1.xsd\n[wsg-84]: https://en.wikipedia.org/wiki/World_Geodetic_System\n"
+  "/v0/webhooks/receivers":
+    get:
+      summary: List receivers
+      tags:
+      - Webhooks
+      operationId: get-v0-webhooks-receivers
+      parameters:
+      - "$ref": "#/components/parameters/Partner-Access-Token"
+      - "$ref": "#/components/parameters/page-number"
+      - "$ref": "#/components/parameters/page-size"
+      security:
+      - Partner: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_receivers.index.v0"
+              examples:
+                List of receivers:
+                  value:
+                    data:
+                    - id: b4f57128-687e-46f7-8f03-2d1ddfcf6eb5
+                      type: receivers
+                      attributes:
+                        webhook_url: https://www.example.com
+                        state: active
+                        api_version: 0
+                        created_at: '2021-01-14T06:19:41Z'
+                        updated_at: '2021-01-14T06:19:41Z'
+                        failure_reason:
+                    links:
+                      next: https://partnerapi.runtastic.com/v0/webhooks/receivers?page%5Bsize%5D=1&page%5Bnumber%5D=3
+                      prev: https://partnerapi.runtastic.com/v0/webhooks/receivers?page%5Bssize%5D=1&page%5Bsnumber%5D=1
+                      last: https://partnerapi.runtastic.com/v0/webhooks/receivers?page%5Bssize%5D=1&page%5Bsnumber%5D=4
+                      first: https://partnerapi.runtastic.com/v0/webhooks/receivers?page%5Bssize%5D=1&page%5Bsnumber%5D=1
+                    meta:
+                      overall_count: 4
+                    jsonapi: string
+          headers: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '429':
+          description: Too Many Requests
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                API rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+      description: List receivers
+    post:
+      tags:
+      - Webhooks
+      summary: Create Receiver
+      operationId: post-v0-webhooks-receivers
+      responses:
+        '201':
+          description: Created
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_receivers.create.v0"
+              examples:
+                Created receiver:
+                  value:
+                    id: b4f57128-687e-46f7-8f03-2d1ddfcf6eb5
+                    type: receivers
+                    data:
+                      webhook_url: https://www.example.com
+                      state: active
+                      api_version: 0
+                      created_at: '2021-01-14T06:19:41Z'
+                      updated_at: '2021-01-14T06:19:41Z'
+                      failure_reason:
+                      signing_secret: k7xkKLrM1RVjO4G7OgEeAC3OdnBlsxpoCInupCQEBoc=
+                    jsonapi:
+                      version: string
+          headers: {}
+        '400':
+          description: Bad Request
+          headers: {}
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_bad-request"
+              examples: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '413':
+          description: Request Entity Too Large
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_request-size-limit"
+              examples:
+                Request size limit exceeded:
+                  value:
+                    message: Request size limit exceeded
+        '429':
+          description: Too Many Requests
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                API rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+      parameters:
+      - "$ref": "#/components/parameters/Partner-Access-Token"
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              "$ref": "#/components/schemas/models_requests_body_receivers.create.v0"
+            examples:
+              Create receiver:
+                value:
+                  data:
+                    webhook_url: https://example.com
+                    state: active
+        description: ''
+      description: Caution! This is the only endpoint returning the signing_secret
+        property of the webhook and it cannot be retrieved in another way!
+      security:
+      - Partner: []
+  "/v0/webhooks/receivers/{receiver_id}":
+    parameters:
+    - schema:
+        type: string
+        format: uuid
+      name: receiver_id
+      in: path
+      required: true
+      description: ID of the receiver
+    get:
+      summary: Retrieve Receiver
+      tags:
+      - Webhooks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_receivers.retrieve.v0"
+          headers: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '404':
+          description: Not Found
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_not-found"
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                    - code: NOT_FOUND
+                      status: '404'
+        '429':
+          description: Too Many Requests
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                API rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+      operationId: get-v0-webhooks-receivers-receiver_id
+      description: "Retrieve data about a Receiver. \n\nNote that the `singing_secret`
+        attribute is only visible in the response of the `Create Receiver` action,
+        it won't be returned in this endpoint."
+      parameters:
+      - "$ref": "#/components/parameters/Partner-Access-Token"
+      security:
+      - Partner: []
+    patch:
+      summary: Update Receiver
+      operationId: patch-v0-webhooks-receivers-receiver_id
+      tags:
+      - Webhooks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_receivers.update.v0"
+              examples:
+                Updated receiver:
+                  value:
+                    data:
+                      id: b4f57128-687e-46f7-8f03-2d1ddfcf6eb5
+                      type: receivers
+                      attributes:
+                        webhook_url: https://www.example.com
+                        state: deactivated
+                        api_version: 0
+                        created_at: '2021-01-14T06:19:41Z'
+                        updated_at: '2021-01-14T06:19:41Z'
+                        failure_reason:
+                    jsonapi:
+                      version: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '404':
+          description: Not Found
+          headers: {}
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_not-found"
+              examples:
+                Not Found:
+                  value:
+                    links: {}
+                    jsonapi:
+                      meta: {}
+                      version: string
+                    meta: {}
+                    errors:
+                    - id: string
+                      meta: {}
+                      source:
+                        pointer: string
+                        parameter: string
+                      detail: string
+                      title: string
+                      code: NOT_FOUND
+                      status: '404'
+                      links: {}
+        '413':
+          description: Request Entity Too Large
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_request-size-limit"
+              examples:
+                Request size limit exceeded:
+                  value:
+                    message: Request size limit exceeded
+        '429':
+          description: Too Many Requests
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                API rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+      security:
+      - Partner: []
+      parameters:
+      - "$ref": "#/components/parameters/Partner-Access-Token"
+      requestBody:
+        content:
+          application/vnd.api+json:
+            schema:
+              "$ref": "#/components/schemas/models_requests_body_receivers.update.v0"
+            examples:
+              Update receiver:
+                value:
+                  data:
+                    webhook_url: https://example.com
+                    state: active
+        description: ''
+      description: Update Receiver
+    delete:
+      summary: Delete Receiver
+      operationId: delete-v0-webhooks-receivers-receiver_id
+      tags:
+      - Webhooks
+      responses:
+        '204':
+          description: No Content
+          headers: {}
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '404':
+          description: Not Found
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_not-found"
+              examples:
+                Not Found:
+                  value:
+                    errors:
+                    - code: NOT_FOUND
+                      status: '404'
+        '429':
+          description: Too Many Requests
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                API rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+      description: "Deletes the provided resource if it exists. \n\n<!-- theme: warning
+        -->\n>All related notifications and subscriptions will be deleted, but some
+        already enqueued notifications might still be sent."
+      security:
+      - Partner: []
+      parameters:
+      - "$ref": "#/components/parameters/Partner-Access-Token"
+  "/v0/webhooks/subscriptions":
+    post:
+      summary: Create Subscription
+      operationId: post-v0-webhooks-subscriptions
+      tags:
+      - Webhooks
+      responses:
+        '201':
+          description: Created
+          headers: {}
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/models_responses_body_subscriptions.create.v0"
+              examples:
+                Subscription created:
+                  value:
+                    data:
+                      id: 645489a9-96dc-4067-b301-5d60c9c02f00
+                      type: subscriptions
+                      attributes:
+                        receiver_id: b45de99a-9158-413b-a559-77a398e208f3
+                        user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+                        topics:
+                        - activity:created
+                        created_at: '2019-08-24T14:15:22Z'
+                        updated_at: '2019-08-24T14:15:22Z'
+                    jsonapi:
+                      version: string
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_unauthorized"
+              examples:
+                Invalid access token:
+                  value:
+                    error_description: The access token is invalid or has expired
+                    error: invalid_token
+        '409':
+          description: Conflict
+          content:
+            application/vnd.api+json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_conflict"
+              examples:
+                Subscription conflict:
+                  value:
+                    errors:
+                    - detail: Subscription already created
+                      code: CONFLICT
+                      status: '409'
+        '413':
+          description: Request Entity Too Large
+          headers: {}
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_request-size-limit"
+              examples:
+                Request size limit exceeded:
+                  value:
+                    message: Request size limit exceeded
+        '429':
+          description: Too Many Requests
+          headers:
+            X-Ratelimit-Limit-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Hour"
+            X-Ratelimit-Limit-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Limit-Minute"
+            X-Ratelimit-Remaining-Hour:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Hour"
+            X-Ratelimit-Remaining-Minute:
+              "$ref": "#/components/headers/X-Ratelimit-Remaining-Minute"
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/schemas_errors_rate-limit"
+              examples:
+                API rate limit exceeded:
+                  value:
+                    message: API rate limit exceeded
+      description: |-
+        A subscription entity has to be related to a user. The request has to be performed in behalf of a user (using the OAuth2 bearer token) and that user will be linked to the subscription.
+
+        Note that a user can have only one Subscription for each WebhookReceiver.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/models_requests_body_subscriptions.create.v0"
+            examples:
+              Create subscription for `activity:created`:
+                value:
+                  topics:
+                  - activity:created
+                  receiver_id: b45de99a-9158-413b-a559-77a398e208f3
+      security:
+      - Partner-in-behalf-of-User:
+        - pa_identity
+        - openid
+      parameters:
+      - "$ref": "#/components/parameters/Partner-in-behalf-of-user-Access-Token"
+components:
+  schemas:
+    models_responses_body_activities.index.v0:
+      title: activities.index.v0
+      type: object
+      x-examples: {}
+      properties:
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/models_Activity.v0"
+        links:
+          "$ref": "#/components/schemas/schemas_jsonapi_pagination"
+        meta:
+          type: object
+          required:
+          - overall_count
+          properties:
+            overall_count:
+              type: integer
+        jsonapi:
+          type: object
+          properties:
+            version:
+              type: string
+              example: '1.0'
+      required:
+      - data
+      - meta
+      description: ''
+    models_Activity.v0:
+      title: Activity.v0
+      allOf:
+      - "$ref": "#/components/schemas/models_identifiers_Activity.identifier.v0"
+      - type: object
+        properties:
+          attributes:
+            "$ref": "#/components/schemas/models_attributes_Activity.attributes.v0"
+      x-examples:
+        Activity v0 model:
+          id: 72fa7858-f293-4df0-9cbe-dd5b21e5c6a0
+          type: activity
+          attributes:
+            sport_type: string
+            start_time: 0
+            end_time: 0
+            start_time_timezone_offset: 0
+            end_time_timezone_offset: 0
+            distance: 0
+            duration: 0
+            elevation_gain: 0
+            elevation_loss: 0
+            calories:
+            pause_duration: 0
+            pulse_avg:
+            pulse_max:
+            weather_condition: string
+            subjective_feeling: string
+            surface: string
+            longitude: 0
+            latitude: 0
+            temperature:
+            notes:
+    models_identifiers_Activity.identifier.v0:
+      title: Activity Identifier
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - activity
+      required:
+      - id
+      - type
+      x-examples:
+        Activity identifiers:
+          id: 497f6eca-6276-4993-bfeb-53cbbbba6f08
+          type: activity
+    models_attributes_Activity.attributes.v0:
+      description: ''
+      type: object
+      x-examples:
+        Activity attributes:
+          sport_type: cycling
+          start_time: 1596963316000
+          end_time: 1596987088000
+          start_time_timezone_offset: 7200000
+          end_time_timezone_offset: 7200000
+          distance: 43660
+          duration: 10149133
+          elevation_gain: 322
+          elevation_loss: 319
+          calories: 1526
+          pause_duration: 13623990
+          pulse_avg: 124
+          pulse_max: 151
+          weather_condition: sunny
+          subjective_feeling: awesome
+          surface: road
+          longitude: 14.270083364099264
+          latitude: 48.30641211010516
+          temperature: 28.1
+          notes: Nice bike ride with Kevin
+      title: ''
+      properties:
+        sport_type:
+          type: string
+          nullable: false
+          description: activity sport, check [this list](http://localhost:8000/API/v0/sport_types/)
+          example: cycling
+        start_time:
+          type: integer
+          nullable: false
+          description: activity start time milliseconds since Epoch
+          example: 1596963316000
+        end_time:
+          type: integer
+          nullable: false
+          description: activity end time milliseconds since Epoch
+          example: 1596987088000
+        start_time_timezone_offset:
+          type: integer
+          nullable: false
+          description: start time timezone offset in milliseconds
+          example: 7200000
+        end_time_timezone_offset:
+          type: integer
+          nullable: false
+          description: end time timezone offset in milliseconds
+          example: 7200000
+        distance:
+          type: integer
+          nullable: false
+          description: activity distance in meters
+          example: 43660
+          default: 0
+        duration:
+          type: integer
+          nullable: false
+          description: activity duration in milliseconds
+          example: 10149133
+        elevation_gain:
+          type: integer
+          nullable: true
+          description: gained elevation in meters
+          example: 322
+        elevation_loss:
+          type: integer
+          nullable: true
+          description: lost elevation in meters
+          example: 319
+        calories:
+          type: integer
+          nullable: true
+          description: burned calories in KCal
+          example: 1526
+        pause_duration:
+          type: integer
+          nullable: true
+          description: activity paused time in milliseconds
+          example: 13623990
+          default: 0
+        pulse_avg:
+          type: integer
+          nullable: true
+          description: average heartbeat in bpm
+          example: 124
+        pulse_max:
+          type: integer
+          nullable: true
+          description: maximum heartbeat in bpm
+          example: 151
+        weather_condition:
+          type: string
+          nullable: true
+          enum:
+          - sunny
+          - cloudy
+          - rainy
+          - snowy
+          - night
+          -
+          description: selected by the user after finishing an activity
+        subjective_feeling:
+          type: string
+          nullable: true
+          enum:
+          - awesome
+          - good
+          - so_so
+          - sluggish
+          - injured
+          -
+          description: selected by the user after finishing an activity
+        surface:
+          type: string
+          nullable: true
+          enum:
+          - road
+          - trail
+          - offroad
+          - mixed
+          - beach
+          -
+          description: selected by the user after finishing an activity
+        longitude:
+          type: number
+          nullable: true
+          format: float
+          description: longitude of the starting point
+          example: 14.270083364099264
+        latitude:
+          type: number
+          nullable: true
+          format: float
+          description: latitude of the starting point
+          example: 48.30641211010516
+        temperature:
+          type: number
+          nullable: true
+          description: temperature during the activity in Celsius
+          example: 28.1
+          format: float
+        notes:
+          type: string
+          nullable: true
+          description: Written by the user after finishing an activity
+          example: Nice bike ride with Kevin
+      required:
+      - sport_type
+      - start_time
+      - end_time
+      - start_time_timezone_offset
+      - end_time_timezone_offset
+      - distance
+      - duration
+      - elevation_gain
+      - elevation_loss
+      - calories
+      - pause_duration
+      - pulse_avg
+      - pulse_max
+      - weather_condition
+      - subjective_feeling
+      - surface
+      - longitude
+      - latitude
+      - temperature
+      - notes
+    schemas_jsonapi_pagination:
+      title: Pagination Links
+      type: object
+      properties:
+        first:
+          type: string
+          format: uri
+        last:
+          type: string
+          format: uri
+        next:
+          type: string
+          format: uri
+          nullable: true
+        prev:
+          type: string
+          format: uri
+          nullable: true
+    schemas_errors_bad-request:
+      title: Bad Request
+      type: object
+      required:
+      - errors
+      properties:
+        errors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/schemas_errors_json-api-error"
+    schemas_errors_json-api-error:
+      title: JSON:API Error
+      type: object
+      properties:
+        status:
+          type: string
+        code:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+      required:
+      - status
+      - code
+    schemas_errors_unauthorized:
+      title: Unauthorized
+      type: object
+      properties:
+        error:
+          type: string
+        error_description:
+          type: string
+      required:
+      - error
+      - error_description
+    schemas_errors_rate-limit:
+      title: Rate Limit Error
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    schemas_errors_request-size-limit:
+      title: Request Size Limit Error
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+      - message
+    models_requests_body_activities.import.v0:
+      title: activities.import.v0
+      type: object
+      required:
+      - file
+      properties:
+        file:
+          type: string
+          description: The FIT/GPX file payload to be imported, as file upload, not
+            as string
+          format: binary
+        description:
+          type: string
+          description: Description of the activity that will be visible in adidas
+            Running app
+        distance:
+          type: integer
+          x-stoplight:
+            id: xw3zuoyscc3vg
+          minimum: 1
+          description: Distance to be set for activity overriding the calculated information
+            from the file if set.
+    models_responses_body_activities.retrieve.v0:
+      title: activities.retrieve.v0
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/models_Activity.v0"
+        jsonapi:
+          type: object
+          required:
+          - version
+          properties:
+            version:
+              type: string
+              example: '1.0'
+      required:
+      - data
+      - jsonapi
+    schemas_errors_not-found:
+      title: Not Found
+      type: object
+      required:
+      - errors
+      properties:
+        errors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/schemas_errors_json-api-error"
+    models_responses_body_receivers.index.v0:
+      title: receivers.index.v0
+      description: ''
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/models_Receiver.v0"
+        links:
+          allOf:
+          - "$ref": "#/components/schemas/schemas_jsonapi_pagination"
+          - "$ref": "#/components/schemas/schemas_jsonapi_links"
+        meta:
+          type: object
+          required:
+          - overall_count
+          properties:
+            overall_count:
+              type: integer
+              minimum: 0
+        jsonapi:
+          type: string
+      required:
+      - data
+      - links
+      - meta
+      - jsonapi
+    models_Receiver.v0:
+      title: Receiver.v0
+      allOf:
+      - "$ref": "#/components/schemas/models_identifiers_Receiver.v0"
+      - type: object
+        properties:
+          attributes:
+            "$ref": "#/components/schemas/models_attributes_Receiver.attributes.v0"
+      x-examples:
+        Reveiver v0 model:
+          id: b4f57128-687e-46f7-8f03-2d1ddfcf6eb5
+          type: receivers
+          attributes:
+            webhook_url: https://www.example.com
+            state: active
+            api_version: 0
+            created_at: '2021-01-14T06:19:41Z'
+            updated: '2021-01-14T06:19:41Z'
+            failure_reason:
+    models_identifiers_Receiver.v0:
+      title: Receiver.v0
+      type: object
+      x-examples:
+        Receiver identifiers:
+          id: 9637b5bf-c558-4ca0-bb82-362c1600f93e
+          type: receivers
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Identifier of the webhook receiver, generated by the server
+        type:
+          type: string
+          enum:
+          - receivers
+      required:
+      - id
+      - type
+    models_attributes_Receiver.attributes.v0:
+      type: object
+      x-examples:
+        Receiver attributes without signing secret:
+          webhook_url: https://www.example.com
+          state: active
+          api_version: 0
+          created_at: '2021-01-14T06:19:41Z'
+          updated: '2021-01-14T06:19:41Z'
+      properties:
+        webhook_url:
+          type: string
+          format: uri
+          pattern: "^https"
+          example: https://www.example.com
+        state:
+          type: string
+          enum:
+          - active
+          - deactivated
+        api_version:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+          example: '2021-01-14T06:19:41Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2021-01-14T06:19:41Z'
+        failure_reason:
+          type: string
+          nullable: true
+      required:
+      - webhook_url
+      - state
+      - api_version
+      - created_at
+      - updated_at
+    schemas_jsonapi_links:
+      title: JSON:API Links
+      type: object
+      additionalProperties:
+        type: string
+        format: uri
+        nullable: true
+    models_responses_body_receivers.create.v0:
+      title: receivers.create.v0
+      description: ''
+      allOf:
+      - "$ref": "#/components/schemas/models_identifiers_Receiver.v0"
+      - type: object
+        properties:
+          data:
+            "$ref": "#/components/schemas/models_attributes_Receiver.attributes.with.signing.secret.v0"
+          jsonapi:
+            type: object
+            required:
+            - version
+            properties:
+              version:
+                type: string
+                minLength: 1
+        required:
+        - data
+        - jsonapi
+    models_attributes_Receiver.attributes.with.signing.secret.v0:
+      allOf:
+      - "$ref": "#/components/schemas/models_attributes_Receiver.attributes.v0"
+      - type: object
+        properties:
+          signing_secret:
+            type: string
+            example: k7xkKLrM1RVjO4G7OgEeAC3OdnBlsxpoCInupCQEBoc=
+            description: Secret used to sign webhook payload. This property will only
+              be returned by the create endpoint!
+        required:
+        - signing_secret
+      x-examples:
+        Attributes with signing secret and failure reason:
+          webhook_url: https://www.example.com
+          state: active
+          api_version: 0
+          created_at: '2021-01-14T06:19:41Z'
+          updated_at: '2021-01-14T06:19:41Z'
+          signing_secret: k7xkKLrM1RVjO4G7OgEeAC3OdnBlsxpoCInupCQEBoc=
+          failure_reason:
+    models_requests_body_receivers.create.v0:
+      title: receivers.create.v0
+      description: ''
+      type: object
+      properties:
+        data:
+          type: object
+          required:
+          - webhook_url
+          - state
+          properties:
+            webhook_url:
+              type: string
+              minLength: 1
+              format: uri
+              pattern: "^https"
+            state:
+              type: string
+              minLength: 1
+              enum:
+              - active
+              - deactivated
+      required:
+      - data
+    models_responses_body_receivers.retrieve.v0:
+      title: receivers.retrieve.v0
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/models_Receiver.v0"
+        jsonapi:
+          type: object
+          required:
+          - version
+          properties:
+            version:
+              type: string
+              minLength: 1
+      required:
+      - data
+      - jsonapi
+    models_responses_body_receivers.update.v0:
+      title: receivers.update.v0
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/models_Receiver.v0"
+        jsonapi:
+          type: object
+          required:
+          - version
+          properties:
+            version:
+              type: string
+              minLength: 1
+      required:
+      - data
+      - jsonapi
+    models_requests_body_receivers.update.v0:
+      title: receivers.update.v0
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            webhook_url:
+              type: string
+              minLength: 1
+              format: uri
+              pattern: "^https"
+            state:
+              type: string
+              minLength: 1
+              enum:
+              - active
+              - deactivated
+      required:
+      - data
+    models_responses_body_subscriptions.create.v0:
+      title: subscriptions.create.v0
+      type: object
+      properties:
+        data:
+          "$ref": "#/components/schemas/models_Subscription.v0"
+        jsonapi:
+          type: object
+          required:
+          - version
+          properties:
+            version:
+              type: string
+              minLength: 1
+      required:
+      - data
+      - jsonapi
+    models_Subscription.v0:
+      title: Subscription
+      allOf:
+      - "$ref": "#/components/schemas/models_identifiers_Subscription.v0"
+      - type: object
+        properties:
+          attributes:
+            "$ref": "#/components/schemas/models_attributes_Subscription.attributes.v0"
+      x-examples:
+        Subscription example:
+          id: 645489a9-96dc-4067-b301-5d60c9c02f00
+          type: subscriptions
+          attributes:
+            receiver_id: b45de99a-9158-413b-a559-77a398e208f3
+            user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+            topics:
+            - activity:created
+            created_at: '2019-08-24T14:15:22Z'
+            updated_at: '2019-08-24T14:15:22Z'
+    models_identifiers_Subscription.v0:
+      title: Subscription.v0
+      type: object
+      x-examples:
+        Subscription identifiers:
+          id: 63fdf7f1-6ea8-429a-94a8-7866fe702c88
+          type: subscriptions
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - subscriptions
+      required:
+      - id
+      - type
+    models_attributes_Subscription.attributes.v0:
+      title: Subscription.attributes.v0
+      type: object
+      x-examples:
+        Subscription attributes:
+          receiver_id: b45de99a-9158-413b-a559-77a398e208f3
+          user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+          topics:
+          - activity:created
+          created_at: '2019-08-24T14:15:22Z'
+          updated_at: '2019-08-24T14:15:22Z'
+      required:
+      - receiver_id
+      - user_id
+      - topics
+      - created_at
+      - updated_at
+      properties:
+        receiver_id:
+          type: string
+          format: uuid
+          description: The ID of the WebhookReceiver bound to this Subscription
+        user_id:
+          type: string
+          format: uuid
+          description: The ID of the user whose events will be listened to
+        topics:
+          type: array
+          description: A set of event types that will trigger this webhook
+          items:
+            type: string
+            example: activity:created
+            enum:
+            - activity:created
+            - access_grant:deleted
+        created_at:
+          type: string
+          format: date-time
+          description: Date and time of creation
+        updated_at:
+          type: string
+          format: date-time
+          description: Date and time of the most recent update
+    schemas_errors_conflict:
+      title: Conflict
+      type: object
+      required:
+      - errors
+      properties:
+        errors:
+          type: array
+          items:
+            "$ref": "#/components/schemas/schemas_errors_json-api-error"
+    models_requests_body_subscriptions.create.v0:
+      title: subscriptions.create.v0
+      type: object
+      required:
+      - topics
+      - receiver_id
+      properties:
+        topics:
+          type: array
+          items:
+            type: string
+            enum:
+            - activity:created
+            - access_grant:deleted
+        receiver_id:
+          type: string
+          format: uuid
+  headers:
+    X-Ratelimit-Limit-Hour:
+      schema:
+        type: integer
+      description: Maximum number of requests that can be done in the current hour
+    X-Ratelimit-Limit-Minute:
+      schema:
+        type: integer
+      description: Maximum number of requests that can be done in the current minute
+    X-Ratelimit-Remaining-Hour:
+      schema:
+        type: integer
+      description: Number of requests that still can be done in the current hour.
+        If the limit was reached, the value equals `0`.
+    X-Ratelimit-Remaining-Minute:
+      schema:
+        type: integer
+      description: Number of requests that still can be done in the current minute.
+        If the limit was reached, the value equals `0`.
+  parameters:
+    Partner-in-behalf-of-user-Access-Token:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: |-
+        Access token retrieved from the [Authorization Code OAuth flow](http://localhost:8000/authentication/v1/partner_in_behalf_of_user/).
+        Format: `Bearer {ACCESS_TOKEN}`
+    sort:
+      name: sort
+      in: query
+      required: false
+      schema:
+        type: string
+        enum:
+        - start_time
+        - end_time
+        - updated_at
+        - created_at
+        - "-start_time"
+        - "-end_time"
+        - "-updated_at"
+        - "-created_at"
+        default: "-start_time"
+        example: "-start_time"
+      description: Sort parameter
+    page-number:
+      name: page[number]
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+      description: Page number used for pagination
+      required: false
+    page-size:
+      name: page[size]
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+        default: 10
+      description: Page size used for pagination
+      required: false
+    filter-sport-type-name:
+      name: filter[sport_type_name]
+      in: query
+      schema:
+        type: string
+      description: Only activitites from this sport type will be returned [check the
+        list](https://runtastic.stoplight.io/docs/public-api-docs/docs/API/v0/sport_types.md)
+    activity_id:
+      name: activity_id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        example: 8b8203ea-699a-4222-b52a-349073db86e6
+      description: ID of the activity
+    Partner-Access-Token:
+      name: Authorization
+      in: header
+      required: true
+      schema:
+        type: string
+      description: |-
+        Access token retrieved from the [Client Credentials OAuth flow](http://localhost:8000/authentication/v1/partner/).
+        Format: `Bearer {ACCESS_TOKEN}`
+  securitySchemes:
+    Partner:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+          scopes: {}
+          refreshUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+      description: Client Credentials flow from RFC 6749 section 1.3.4. See http://localhost:8000/authentication/v1/partner/.
+    Partner-in-behalf-of-User:
+      type: oauth2
+      flows:
+        authorizationCode:
+          tokenUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+          scopes:
+            pa_identity: Identity information
+            pa_contact: Contact information
+            pa_location: Location information
+            pa_size: Size information
+            pa_purchase_info: Purchase information
+            pa_behavioural: Behavioural and Profile information
+            pa_community: Community information
+            pa_social_media: Social Media information
+            pa_device: Device information
+            pa_activity_read: View activity information
+            pa_activity_write: Create activity information
+            pa_activity: 'Activity information. DEPRECATED: use pa_activity_read and/or
+              pa_activity_write instead.'
+            pa_preference: Preference information
+            pa_creators_club: Creators Club information
+            openid: Application intends to use OIDC to verify the user's identity,
+              required to use the webhooks features
+          refreshUrl: https://accounts.runtastic.com/v1/as/token.oauth2
+          authorizationUrl: https://accounts.runtastic.com/v1/as/authorization.oauth2?pfidpadapterid=refid&redirect_uri=YOUR_APP_CALLBACK_URL&state=OPTIONAL_CUSTOM_DATA
+      description: Authorization Code flow from RFC 6749 section 1.3.1. See http://localhost:8000/authentication/v1/partner_in_behalf_of_user/.
+  responses:
+    error-403-forbidden:
+      description: Forbidden
+      content:
+        application/vnd.api+json:
+          schema:
+            type: object
+            additionalProperties: false
+            properties:
+              errors:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  properties:
+                    code:
+                      type: string
+                      enum:
+                      - FORBIDDEN
+                    status:
+                      type: string
+                      enum:
+                      - '403'
+                    title:
+                      type: string
+                    detail:
+                      type: string
+                  required:
+                  - code
+                  - status
+            required:
+            - errors
+          examples:
+            Insufficient scope:
+              value:
+                errors:
+                - code: FORBIDDEN
+                  detail: 'Insufficient scope. Required: pa_activity_read'
+                  status: '403'

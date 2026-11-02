@@ -1,0 +1,21 @@
+---
+title: activities.import.v0
+type: object
+required:
+- file
+properties:
+  file:
+    type: string
+    description: The FIT/GPX file payload to be imported, as file upload, not as string
+    format: binary
+  description:
+    type: string
+    description: Description of the activity that will be visible in adidas Running
+      app
+  distance:
+    type: integer
+    x-stoplight:
+      id: xw3zuoyscc3vg
+    minimum: 1
+    description: Distance to be set for activity overriding the calculated information
+      from the file if set.

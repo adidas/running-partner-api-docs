@@ -1,0 +1,33 @@
+---
+title: Activity.v0
+allOf:
+- "$ref": "./identifiers/Activity.identifier.v0.yaml"
+- type: object
+  properties:
+    attributes:
+      "$ref": "./attributes/Activity.attributes.v0.yaml"
+x-examples:
+  Activity v0 model:
+    id: 72fa7858-f293-4df0-9cbe-dd5b21e5c6a0
+    type: activity
+    attributes:
+      sport_type: string
+      start_time: 0
+      end_time: 0
+      start_time_timezone_offset: 0
+      end_time_timezone_offset: 0
+      distance: 0
+      duration: 0
+      elevation_gain: 0
+      elevation_loss: 0
+      calories: 
+      pause_duration: 0
+      pulse_avg: 
+      pulse_max: 
+      weather_condition: string
+      subjective_feeling: string
+      surface: string
+      longitude: 0
+      latitude: 0
+      temperature: 
+      notes: 

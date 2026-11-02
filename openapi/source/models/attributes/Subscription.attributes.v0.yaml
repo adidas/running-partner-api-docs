@@ -1,0 +1,43 @@
+---
+title: Subscription.attributes.v0
+type: object
+x-examples:
+  Subscription attributes:
+    receiver_id: b45de99a-9158-413b-a559-77a398e208f3
+    user_id: a169451c-8525-4352-b8ca-070dd449a1a5
+    topics:
+    - activity:created
+    created_at: '2019-08-24T14:15:22Z'
+    updated_at: '2019-08-24T14:15:22Z'
+required:
+- receiver_id
+- user_id
+- topics
+- created_at
+- updated_at
+properties:
+  receiver_id:
+    type: string
+    format: uuid
+    description: The ID of the WebhookReceiver bound to this Subscription
+  user_id:
+    type: string
+    format: uuid
+    description: The ID of the user whose events will be listened to
+  topics:
+    type: array
+    description: A set of event types that will trigger this webhook
+    items:
+      type: string
+      example: activity:created
+      enum:
+      - activity:created
+      - access_grant:deleted
+  created_at:
+    type: string
+    format: date-time
+    description: Date and time of creation
+  updated_at:
+    type: string
+    format: date-time
+    description: Date and time of the most recent update

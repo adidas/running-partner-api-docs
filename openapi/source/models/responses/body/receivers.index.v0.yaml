@@ -1,0 +1,28 @@
+---
+title: receivers.index.v0
+description: ''
+type: object
+properties:
+  data:
+    type: array
+    items:
+      "$ref": "../../Receiver.v0.yaml"
+  links:
+    allOf:
+    - "$ref": "../../../schemas/jsonapi/pagination.yaml"
+    - "$ref": "../../../schemas/jsonapi/links.yaml"
+  meta:
+    type: object
+    required:
+    - overall_count
+    properties:
+      overall_count:
+        type: integer
+        minimum: 0
+  jsonapi:
+    type: string
+required:
+- data
+- links
+- meta
+- jsonapi

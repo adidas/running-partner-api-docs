@@ -1,0 +1,171 @@
+---
+description: ''
+type: object
+x-examples:
+  Activity attributes:
+    sport_type: cycling
+    start_time: 1596963316000
+    end_time: 1596987088000
+    start_time_timezone_offset: 7200000
+    end_time_timezone_offset: 7200000
+    distance: 43660
+    duration: 10149133
+    elevation_gain: 322
+    elevation_loss: 319
+    calories: 1526
+    pause_duration: 13623990
+    pulse_avg: 124
+    pulse_max: 151
+    weather_condition: sunny
+    subjective_feeling: awesome
+    surface: road
+    longitude: 14.270083364099264
+    latitude: 48.30641211010516
+    temperature: 28.1
+    notes: Nice bike ride with Kevin
+title: ''
+properties:
+  sport_type:
+    type: string
+    nullable: false
+    description: activity sport, check [this list](http://localhost:8000/API/v0/sport_types/)
+    example: cycling
+  start_time:
+    type: integer
+    nullable: false
+    description: activity start time milliseconds since Epoch
+    example: 1596963316000
+  end_time:
+    type: integer
+    nullable: false
+    description: activity end time milliseconds since Epoch
+    example: 1596987088000
+  start_time_timezone_offset:
+    type: integer
+    nullable: false
+    description: start time timezone offset in milliseconds
+    example: 7200000
+  end_time_timezone_offset:
+    type: integer
+    nullable: false
+    description: end time timezone offset in milliseconds
+    example: 7200000
+  distance:
+    type: integer
+    nullable: false
+    description: activity distance in meters
+    example: 43660
+    default: 0
+  duration:
+    type: integer
+    nullable: false
+    description: activity duration in milliseconds
+    example: 10149133
+  elevation_gain:
+    type: integer
+    nullable: true
+    description: gained elevation in meters
+    example: 322
+  elevation_loss:
+    type: integer
+    nullable: true
+    description: lost elevation in meters
+    example: 319
+  calories:
+    type: integer
+    nullable: true
+    description: burned calories in KCal
+    example: 1526
+  pause_duration:
+    type: integer
+    nullable: true
+    description: activity paused time in milliseconds
+    example: 13623990
+    default: 0
+  pulse_avg:
+    type: integer
+    nullable: true
+    description: average heartbeat in bpm
+    example: 124
+  pulse_max:
+    type: integer
+    nullable: true
+    description: maximum heartbeat in bpm
+    example: 151
+  weather_condition:
+    type: string
+    nullable: true
+    enum:
+    - sunny
+    - cloudy
+    - rainy
+    - snowy
+    - night
+    - 
+    description: selected by the user after finishing an activity
+  subjective_feeling:
+    type: string
+    nullable: true
+    enum:
+    - awesome
+    - good
+    - so_so
+    - sluggish
+    - injured
+    - 
+    description: selected by the user after finishing an activity
+  surface:
+    type: string
+    nullable: true
+    enum:
+    - road
+    - trail
+    - offroad
+    - mixed
+    - beach
+    - 
+    description: selected by the user after finishing an activity
+  longitude:
+    type: number
+    nullable: true
+    format: float
+    description: longitude of the starting point
+    example: 14.270083364099264
+  latitude:
+    type: number
+    nullable: true
+    format: float
+    description: latitude of the starting point
+    example: 48.30641211010516
+  temperature:
+    type: number
+    nullable: true
+    description: temperature during the activity in Celsius
+    example: 28.1
+    format: float
+  notes:
+    type: string
+    nullable: true
+    description: Written by the user after finishing an activity
+    example: Nice bike ride with Kevin
+required:
+- sport_type
+- start_time
+- end_time
+- start_time_timezone_offset
+- end_time_timezone_offset
+- distance
+- duration
+- elevation_gain
+- elevation_loss
+- calories
+- pause_duration
+- pulse_avg
+- pulse_max
+- weather_condition
+- subjective_feeling
+- surface
+- longitude
+- latitude
+- temperature
+- notes

@@ -1,0 +1,11 @@
+---
+title: Unauthorized
+type: object
+properties:
+  error:
+    type: string
+  error_description:
+    type: string
+required:
+- error
+- error_description

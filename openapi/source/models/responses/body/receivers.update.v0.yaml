@@ -1,0 +1,17 @@
+---
+title: receivers.update.v0
+type: object
+properties:
+  data:
+    "$ref": "../../Receiver.v0.yaml"
+  jsonapi:
+    type: object
+    required:
+    - version
+    properties:
+      version:
+        type: string
+        minLength: 1
+required:
+- data
+- jsonapi

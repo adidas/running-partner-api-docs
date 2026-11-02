@@ -1,0 +1,22 @@
+---
+openapi: 3.0.0
+info:
+  title: Running App Partner API
+  version: '0.1'
+  contact:
+    name: Running App Partner API Team
+    email: partnerapi.digitalsports@adidas.com
+  description: |
+    Welcome to adidas Running App Partner API documentation!
+    The Running App Partner API is a REST API.
+    Request and response bodies are, in general, _UTF8 encoded_ and represented in a JSON format.
+    It makes use of standard HTTP status codes and verbs.
+    All traffic to and from the API must use TLS. This means all API calls must be with the HTTPS scheme.
+    The webhook system also only performs requests through HTTPS.
+    Also, all endpoints require authentication. See the Authentication section for more information.
+tags:
+- name: Activities
+- name: Webhooks
+servers:
+- url: https://partnerapi.runtastic.com
+  description: Production

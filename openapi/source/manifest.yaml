@@ -1,0 +1,6 @@
+base: base.yaml
+paths:
+  - paths/activities.yaml
+  - paths/webhooks.yaml
+components:
+  - components/common.yaml

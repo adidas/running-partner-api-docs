@@ -1,0 +1,16 @@
+---
+title: PartnerConnection identifier
+x-stoplight:
+  id: hqwz3kqetg6cu
+type: object
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: lzllxuuoxvltr
+    format: uuid
+  type:
+    x-stoplight:
+      id: bhhl2tit2uwk6
+    enum:
+    - partner_connection

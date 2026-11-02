@@ -1,0 +1,18 @@
+---
+title: Subscription.v0
+type: object
+x-examples:
+  Subscription identifiers:
+    id: 63fdf7f1-6ea8-429a-94a8-7866fe702c88
+    type: subscriptions
+properties:
+  id:
+    type: string
+    format: uuid
+  type:
+    type: string
+    enum:
+    - subscriptions
+required:
+- id
+- type
